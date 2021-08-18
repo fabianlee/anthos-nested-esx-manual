@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# this 'ubuntu-focal' template does not have an ssh login key, just password
+# so use sshpass
+sudo apt install sshpass -y
+
 password=ExamplePass@456
 
 set -x
@@ -12,7 +16,7 @@ done
 # test forward+reverse DNS resolution
 set -ex
 for network in $(seq 140 142); do 
-  ssh -i id_rsa ubuntu@192.168.$network.51 "dig esxi1.home.lab +short; dig -x 192.168.140.236 +short; dig vcenter.home.lab +short; dig -x 192.168.140.237 +short"
+  sshpass -p $password ssh ubuntu@192.168.$network.51 "dig esxi1.home.lab +short; dig -x 192.168.140.236 +short; dig vcenter.home.lab +short; dig -x 192.168.140.237 +short"
 done
 set +ex
 
@@ -20,7 +24,7 @@ set +ex
 # fails if upstream router for this network not configured with static route for subnet
 set -ex
 for network in $(seq 140 142); do 
-  ssh -i id_rsa ubuntu@192.168.$network.51 "dig archive.ubuntu.com +short; ping -c1 archive.ubuntu.com"
+  sshpass -p $password ssh ubuntu@192.168.$network.51 "dig archive.ubuntu.com +short; ping -c1 archive.ubuntu.com"
 done
 set +ex
 

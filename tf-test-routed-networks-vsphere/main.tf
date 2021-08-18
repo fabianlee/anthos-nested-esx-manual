@@ -4,9 +4,9 @@
 # list of hosts to be created, use 'for_each' on relevant resources
 locals {
   testvm = {
-    "vsphere140" = { template="ubuntu20-focal", network = "VM Network", prefixIP = "192.168.140", octetIP = "51", vcpu=1, memoryMB=1024*1 },
-    "vsphere141" = { template="ubuntu20-focal", network = "admin141", prefixIP = "192.168.141", octetIP = "51", vcpu=1, memoryMB=1024*1 },
-    "vsphere142" = { template="ubuntu20-focal", network = "user142", prefixIP = "192.168.142", octetIP = "51", vcpu=1, memoryMB=1024*1 },
+    "vsphere140" = { template="ubuntu-focal", network = "VM Network", prefixIP = "192.168.140", octetIP = "51", vcpu=1, memoryMB=1024*1 },
+    "vsphere141" = { template="ubuntu-focal", network = "admin141", prefixIP = "192.168.141", octetIP = "51", vcpu=1, memoryMB=1024*1 },
+    "vsphere142" = { template="ubuntu-focal", network = "user142", prefixIP = "192.168.142", octetIP = "51", vcpu=1, memoryMB=1024*1 },
   }
 }
 
