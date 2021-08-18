@@ -33,6 +33,7 @@
         pkg:
         - python-netaddr
         - python3-netaddr
+        - jq
         state: present
 
     # https://galaxy.ansible.com/ansible/netcommon

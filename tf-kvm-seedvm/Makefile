@@ -29,3 +29,7 @@ libvirt-pool:
 ## validate syntax of cloud_init
 validate-cloud-config:
 	cloud-init devel schema --config-file cloud_init.cfg
+
+ssh:
+	chmod 400 id_rsa
+	ssh -i id_rsa ubuntu@192.168.140.220
