@@ -19,6 +19,14 @@ for network in $(seq 140 142); do
 done
 set +ex
 
+# test outside ping to archive.ubuntu.com apt repository
+# fails if upstream router for this network not configured with static route for subnet
+set -ex
+for network in $(seq 140 142); do 
+  ssh -i id_rsa ubuntu@192.168.$network.10 "dig archive.ubuntu.com +short; ping -c1 archive.ubuntu.com"
+done
+set +ex
+
 echo ""
 echo ""
 echo "DONE. All tests ran successfully"
