@@ -1,0 +1,25 @@
+# copy this to the admin workstation after completion
+hostconfig:
+  dns: 192.168.2.239
+  tod: time.google.com
+  otherdns:
+  - 8.8.8.8
+  - 8.8.4.4
+  othertod:
+  - time.google.com
+  searchdomainsfordns:
+  - "home.lab"
+blocks:
+  - netmask: 255.255.255.0
+    gateway: 192.168.141.1
+    ips:
+    - ip: 192.168.141.222
+      hostname: admin-host1
+    - ip: 192.168.141.223
+      hostname: admin-host2
+    - ip: 192.168.141.224
+      hostname: admin-host3
+    - ip: 192.168.141.225
+      hostname: admin-host4
+    - ip: 192.168.141.226
+      hostname: admin-host5

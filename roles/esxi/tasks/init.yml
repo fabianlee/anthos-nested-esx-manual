@@ -1,0 +1,9 @@
+---
+
+- name: outgoing ssh/scp access (incoming is done at console)
+  shell:
+    cmd: esxcli network firewall ruleset list --ruleset-id sshClient && esxcli network firewall ruleset set --ruleset-id sshClient --enabled=true
+
+- name: mob enablement
+  command: vim-cmd hostsvc/advopt/update Config.HostAgent.plugins.solo.enableMob bool true
+

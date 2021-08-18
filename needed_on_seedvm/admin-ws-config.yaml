@@ -1,0 +1,50 @@
+gcp:
+  # Path of the whitelisted service account's JSON key file
+  whitelistedServiceAccountKeyPath: "anthos-allowlisted-fabianleeorg.json"
+# Specify which vCenter resources to use
+vCenter:
+  # The credentials and address GKE On-Prem should use to connect to vCenter
+  credentials:
+    address: "vcenter.home.lab"
+    username: "anthos@vsphere.local"
+    password: "ExamplePass@456"
+  datacenter: "mydc1"
+  datastore: "datastore1"
+  folder: admin-ws
+  cluster: "esxi1.home.lab"
+  network: "VM Network"
+  resourcePool: "admin"
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: vcenter.ca.pem
+# The URL of the proxy for the jump host
+proxyUrl: ""
+adminWorkstation:
+  name: gke-admin-ws-210801-174313
+  cpus: 2
+  memoryMB: 8192
+  # The boot disk size of the admin workstation in GB. It is recommended to use a
+  # disk with at least 50 GB to host images decompressed from the bundle.
+  diskGB: 100
+  # Name for the persistent disk to be mounted to the home directory (ending in .vmdk).
+  # Any directory in the supplied path must be created before deployment.
+  dataDiskName: gke-admin-ws-210801-174313-data-disk.vmdk
+  # The size of the data disk in MB.
+  dataDiskMB: 512
+  network:
+    # The IP allocation mode: 'dhcp' or 'static'
+    ipAllocationMode: "static"
+    # # The host config in static IP mode. Do not include if using DHCP
+    hostConfig:
+      # The IPv4 static IP address for the admin workstation
+      ip: "192.168.140.221"
+      # The IP address of the default gateway of the subnet in which the admin workstation
+      # is to be created
+      gateway: "192.168.140.1"
+      # The subnet mask of the network where you want to create your admin workstation
+      netmask: "255.255.255.0"
+      # The list of DNS nameservers to be used by the admin workstation
+      dns:
+      - "192.168.140.1"
+  # The URL of the proxy for the admin workstation
+  proxyUrl: ""
+  ntpServer: time.google.com

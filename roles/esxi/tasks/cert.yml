@@ -1,0 +1,29 @@
+---
+
+- name: check current cert
+  command:
+    cmd: openssl x509 -in rui.crt -text -noout
+    chdir: /etc/vmware/ssl
+  register: current_cert
+- debug: msg="{{current_cert.stdout_lines}}"
+
+- set_fact: cert_is_fqdn=false
+- name: is cert using fqdn
+  set_fact:
+    cert_is_fqdn: true
+  when: "esxi_CN in current_cert.stdout"
+
+- name: change certificate
+  block:
+    - debug: msg="going to do cert refresh"
+
+    - name: generate new certs
+      command:
+        cmd: /sbin/generate-certificates
+        chdir: /etc/vmware/ssl
+    - name: restart related services
+      shell:
+        cmd: /etc/init.d/hostd restart && /etc/init.d/vpxa restart
+
+  when: not cert_is_fqdn
+
