@@ -4,6 +4,7 @@
 #   https://registry.terraform.io/providers/dmacvicar/libvirt/latest/docs/resources/network 
 
 # list of hosts to be created, use 'for_each' on relevant resources
+# TODO put in variables file https://operatingops.com/2021/05/31/terraform-map-and-object-patterns/
 locals {
   seedvm = {
     "kvm140" = { os_code_name = "focal", network = "esxmgmt140", prefixIP = "192.168.140", octetIP = "10", vcpu=1, memoryMB=1024*1 },

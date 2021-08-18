@@ -1,2 +1,5 @@
 # no gcp json keys
 *.json
+
+# no private key for admin ws
+gke-admin-workstation

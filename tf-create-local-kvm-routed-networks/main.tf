@@ -2,6 +2,7 @@
 # which typically means you need to add static routes on your upstream router sending packets back to host
 #
 # list of networks to be created
+# TODO put in variables file https://operatingops.com/2021/05/31/terraform-map-and-object-patterns/
 locals {
   networks = {
     "esxmgmt140" = { mode="route", address="192.168.140.0/24", domain="home.lab", dns_forwarder="127.0.0.1"},
