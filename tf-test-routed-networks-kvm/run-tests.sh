@@ -15,7 +15,7 @@ set +ex
 # test forward+reverse DNS resolution
 set -ex
 for network in $(seq 140 142); do 
-  ssh -i id_rsa ubuntu@192.168.$network.10 "nslookup esxi1.home.lab; nslookup 192.168.140.236; nslookup vcenter.home.lab; nslookup 192.168.140.237"
+  ssh -i id_rsa ubuntu@192.168.$network.10 "dig esxi1.home.lab +short; dig -x 192.168.140.236 +short; dig vcenter.home.lab +short; dig -x 192.168.140.237 +short"
 done
 set +ex
 
