@@ -6,9 +6,9 @@
 # list of hosts to be created, use 'for_each' on relevant resources
 locals {
   seedvm = {
-    "test140" = { os_code_name = "focal", network = "esxmgmt140", prefixIP = "192.168.140", octetIP = "10", vcpu=1, memoryMB=1024*1 },
-    "test141" = { os_code_name = "focal", network = "admin141",   prefixIP = "192.168.141", octetIP = "10", vcpu=1, memoryMB=1024*1 },
-    "test142" = { os_code_name = "focal", network = "user142",    prefixIP = "192.168.142", octetIP = "10", vcpu=1, memoryMB=1024*1 }
+    "kvm140" = { os_code_name = "focal", network = "esxmgmt140", prefixIP = "192.168.140", octetIP = "10", vcpu=1, memoryMB=1024*1 },
+    "kvm141" = { os_code_name = "focal", network = "admin141",   prefixIP = "192.168.141", octetIP = "10", vcpu=1, memoryMB=1024*1 },
+    "kvm142" = { os_code_name = "focal", network = "user142",    prefixIP = "192.168.142", octetIP = "10", vcpu=1, memoryMB=1024*1 }
   }
 }
 
