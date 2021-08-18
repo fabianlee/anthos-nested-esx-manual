@@ -1,0 +1,5 @@
+# no cert or keys for this domain
+anthos.home.lab.*
+
+# not the k9s binary
+k9s_Linux_x86_64.tar.gz

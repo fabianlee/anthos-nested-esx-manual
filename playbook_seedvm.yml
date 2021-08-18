@@ -1,0 +1,16 @@
+---
+
+- hosts: anthos_seedvm
+  gather_facts: yes
+  become: yes
+  vars:
+    # add all in this group to 'docker' group
+    docker_member_group: "ubuntu"
+
+  roles:
+    - anthos-seedvm-prereq
+    - kubectl-gcloud-apt
+    - k9s
+    - govc-cli
+    - docker
+

@@ -1,0 +1,9 @@
+---
+
+- hosts: esxi
+  gather_facts: yes
+  become: yes
+  vars:
+
+  roles:
+    - esxi

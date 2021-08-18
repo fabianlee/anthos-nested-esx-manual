@@ -1,0 +1,8 @@
+---
+
+- name: esxi initial tasks
+  import_tasks: init.yml
+
+- name: esxi cert refresh
+  import_tasks: cert.yml
+

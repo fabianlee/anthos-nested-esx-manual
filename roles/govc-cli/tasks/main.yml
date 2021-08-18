@@ -1,0 +1,34 @@
+---
+
+- name: get latest govc release
+  uri: 
+    url: https://api.github.com/repos/vmware/govmomi/releases/latest
+    body_format: json
+    return_content: yes
+  register: govcversion
+
+- debug:
+    msg: "latest version: {{govcversion.json.tag_name}}"
+
+- name: download latest govc
+  get_url:
+    # example: https://github.com/vmware/govmomi/releases/download/v0.26.0/govc_Linux_x86_64.tar.gz
+    url: https://github.com/vmware/govmomi/releases/download/{{govcversion.json.tag_name}}/govc_Linux_x86_64.tar.gz
+    dest: /tmp
+    mode: 666
+
+- name: extract govc
+  unarchive:
+    src: /tmp/govc_Linux_x86_64.tar.gz
+    remote_src: yes
+    dest: /tmp
+
+- name: move govc binary to PATH
+  copy:
+    src: /tmp/govc
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: 775
+
+
+
