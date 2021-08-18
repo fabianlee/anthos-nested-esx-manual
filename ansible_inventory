@@ -1,0 +1,11 @@
+
+[esxi]
+esxi1 ansible_host=192.168.140.236 ansible_user=root ansible_ssh_pass=ExamplePass@456
+
+[anthos_seedvm]
+seedvm ansible_host=192.168.140.220
+
+[all:vars]
+ansible_user=ubuntu
+#ansible_ssh_pass=*****
+ansible_ssh_private_key_file = tf-kvm-seedvm/id_rsa
