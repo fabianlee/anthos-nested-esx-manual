@@ -3,7 +3,7 @@
 # TODO put in variables map https://operatingops.com/2021/05/31/terraform-map-and-object-patterns/
 locals {
   seedvm = {
-    "seedvm" = { os_code_name = "focal", network = "esxmgmt140", prefixIP = "192.168.140", octetIP = "220", vcpu=4, memoryMB=1024*4, incGB=200 }
+    "seedvm" = { os_code_name = "focal", network = "esxmgmt140", prefixIP = "192.168.140", octetIP = "220", vcpu=1, memoryMB=1024*2, incGB=200 }
   }
 }
 
