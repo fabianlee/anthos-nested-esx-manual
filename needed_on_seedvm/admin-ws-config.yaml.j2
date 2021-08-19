@@ -8,11 +8,11 @@ vCenter:
     address: vcenter.home.lab
     username: "{{vcenter.user}}"
     password: "{{vcenter.password}}"
-  datacenter: "mydc1"
-  datastore: "datastore1"
-  folder: admin-ws
-  cluster: "esxi1.home.lab"
-  network: "VM Network"
+  datacenter: "mydc1" # govc ls /
+  datastore: "datastore1" # govc ls /mydc1/datastore
+  folder: admin-ws # will be created for you
+  cluster: "esxi1.home.lab" # govc ls /mydc1/host
+  network: "VM Network" # govc ls /mydc1/network
   resourcePool: "admin"
   # Provide the path to vCenter CA certificate pub key for SSL verification
   caCertPath: vcenter.ca.pem
