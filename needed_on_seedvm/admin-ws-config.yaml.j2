@@ -1,13 +1,13 @@
 gcp:
   # Path of the whitelisted service account's JSON key file
-  whitelistedServiceAccountKeyPath: "anthos-allowlisted-fabianleeorg.json"
+  whitelistedServiceAccountKeyPath: "anthos-allowlisted.json"
 # Specify which vCenter resources to use
 vCenter:
   # The credentials and address GKE On-Prem should use to connect to vCenter
   credentials:
-    address: "vcenter.home.lab"
-    username: "anthos@vsphere.local"
-    password: "ExamplePass@456"
+    address: "{{vcenter.host}}"
+    username: "{{vcenter.user}}"
+    password: "{{vcenter.password}}"
   datacenter: "mydc1"
   datastore: "datastore1"
   folder: admin-ws
@@ -21,7 +21,7 @@ proxyUrl: ""
 adminWorkstation:
   name: gke-admin-ws-210801-174313
   cpus: 2
-  memoryMB: 8192
+  memoryMB: 2048
   # The boot disk size of the admin workstation in GB. It is recommended to use a
   # disk with at least 50 GB to host images decompressed from the bundle.
   diskGB: 100

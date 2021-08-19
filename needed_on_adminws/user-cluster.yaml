@@ -152,16 +152,16 @@ stackdriver:
   enableVPC: false
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster
-  serviceAccountKeyPath: "log-mon-sa-2108020334.json"
+  serviceAccountKeyPath: "log-mon-sa.json"
 # (Optional) Specify which GCP project to connect your GKE clusters to
 gkeConnect:
   projectID: "fabianleeorg"
   # The absolute or relative path to the key file for a GCP service account used to
   # register the cluster
-  registerServiceAccountKeyPath: "connect-register-sa-2108020334.json"
+  registerServiceAccountKeyPath: "connect-register-sa.json"
   # The absolute or relative path to the key file for a GCP service account used by
   # the GKE connect agent
-  agentServiceAccountKeyPath: "connect-agent-sa-2108020334.json"
+  agentServiceAccountKeyPath: "connect-agent-sa.json"
 # (Optional) Specify Cloud Run configuration
 cloudRun:
   enabled: false

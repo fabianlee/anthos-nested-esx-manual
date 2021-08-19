@@ -1,3 +1,17 @@
 ansible_python_interpreter: /usr/bin/python3
 
+hostvm:
+  ip: 192.168.2.109
 
+gcp:
+  project_name: fabianleeorg
+
+vcenter:
+  host: vcenter.home.lab
+  user: Administrator@vsphere.local
+  password: ExamplePass@456
+
+esxi:
+  host: esxi1.home.lab
+  user: root
+  password: ExamplePass@456
