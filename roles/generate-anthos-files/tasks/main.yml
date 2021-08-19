@@ -14,4 +14,5 @@
     - "{{playbook_dir}}/needed_on_adminws/admin-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/admin-seesaw-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
+    - "{{playbook_dir}}/govc/source-govc-vars.sh"
 

@@ -4,18 +4,14 @@
 #
 # exports variables needed to use govc by looking at terraform variables file
 #
-BIN_DIR=$(dirname ${BASH_SOURCE[0]})
-. "$BIN_DIR/common.sh"
-
-tfvars=$BIN_DIR/tf-vsphere-singlevm/terraform.tfvars
 
 ############## MAIN ##################
 
 # vCenter host
-export GOVC_URL=$(getTFVal $tfvars vsphere_server)
+export GOVC_URL=vcenter.home.lab
 # vCenter credentials
-export GOVC_USERNAME=$(getTFVal $tfvars vsphere_user)
-export GOVC_PASSWORD=$(getTFVal $tfvars vsphere_password)
+export GOVC_USERNAME={{vcenter.user}}
+export GOVC_PASSWORD={{vcenter.password}}
 # disable cert validation
 export GOVC_INSECURE=true
 

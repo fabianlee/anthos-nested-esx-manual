@@ -4,8 +4,8 @@ hostvm:
   ip: 192.168.2.109
 
 gcp:
-  project_name: fabianleeorg
-  project_id: fabianleeorg
+  project_name: anthos1
+  project_id: anthos1-323418 
   stackdriver_region: us-east1
 
 vcenter:
