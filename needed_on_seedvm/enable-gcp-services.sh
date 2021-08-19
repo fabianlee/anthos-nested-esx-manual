@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 # enable GCP services required for Anthos on-prem
 gcloud services enable anthos.googleapis.com anthosgke.googleapis.com cloudresourcemanager.googleapis.com container.googleapis.com gkeconnect.googleapis.com gkehub.googleapis.com serviceusage.googleapis.com stackdriver.googleapis.com monitoring.googleapis.com logging.googleapis.com
 

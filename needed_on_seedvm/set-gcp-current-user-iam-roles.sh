@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 gcpUser=$(gcloud config get-value account)
 echo adding service account permissions to $gcpUser
 

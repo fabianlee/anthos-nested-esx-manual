@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 gcloud projects add-iam-policy-binding $projectId --member "serviceAccount:$accountEmail" --role "roles/serviceusage.serviceUsageViewer"
 
 gcloud projects add-iam-policy-binding $projectId --member "serviceAccount:$accountEmail" --role "roles/iam.serviceAccountCreator"

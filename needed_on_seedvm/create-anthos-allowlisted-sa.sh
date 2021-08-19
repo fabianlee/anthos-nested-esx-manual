@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 # list current service accounts
 gcloud iam service-accounts list
 
