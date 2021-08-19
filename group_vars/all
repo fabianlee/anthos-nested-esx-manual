@@ -5,13 +5,13 @@ hostvm:
 
 gcp:
   project_name: fabianleeorg
+  project_id: fabianleeorg
+  stackdriver_region: us-east1
 
 vcenter:
-  host: vcenter.home.lab
   user: Administrator@vsphere.local
   password: ExamplePass@456
 
 esxi:
-  host: esxi1.home.lab
   user: root
   password: ExamplePass@456

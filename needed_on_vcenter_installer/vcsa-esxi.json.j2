@@ -4,8 +4,8 @@
     "new_vcsa": {
         "esxi": {
             "hostname": "esxi1.home.lab",
-            "username": "root",
-            "password": "ExamplePass@456",
+            "username": "{{esxi.user}}",
+            "password": "{{esxi.password}}",
             "deployment_network": "VM Network",
             "datastore": "datastore1"
         },
@@ -29,12 +29,12 @@
             "system_name": "vcenter.home.lab"
         },
         "os": {
-            "password": "ExamplePass@456",
+            "password": "{{vcenter.password}}",
             "ntp_servers": "time.google.com",
             "ssh_enable": true
         },
         "sso": {
-            "password": "ExamplePass@456",
+            "password": "{{vcenter.password}}",
             "domain_name": "vsphere.local"
         }
     },

@@ -87,7 +87,7 @@ loadBalancer:
 # (Optional) User cluster master nodes must have either 1 or 3 replicas (default:
 # 4 CPUs; 16384 MB memory; 1 replica)
 masterNode:
-  cpus: 4
+  cpus: 2
   memoryMB: 8192
   # How many machines of this type to deploy
   replicas: 1
@@ -103,9 +103,9 @@ nodePools:
   #   value: ""
   #   effect: ""
   cpus: 4
-  memoryMB: 8192
+  memoryMB: 12288
   # How many machines of this type to deploy
-  replicas: 3
+  replicas: 1
 # Spread nodes across at least three physical hosts (requires at least three hosts)
 antiAffinityGroups:
   # Set to false to disable DRS rule creation
@@ -146,16 +146,16 @@ antiAffinityGroups:
 #       memberAttribute: ""
 # (Optional) Specify which GCP project to connect your logs and metrics to
 stackdriver:
-  projectID: "fabianleeorg"
+  projectID: "{{gcp.project_id}}"
   # A GCP region where you would like to store logs and metrics for this cluster.
-  clusterLocation: "us-east1"
+  clusterLocation: "{{gcp.stackdriver_region}}"
   enableVPC: false
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster
   serviceAccountKeyPath: "log-mon-sa.json"
 # (Optional) Specify which GCP project to connect your GKE clusters to
 gkeConnect:
-  projectID: "fabianleeorg"
+  projectID: "{{gcp.project_id}}"
   # The absolute or relative path to the key file for a GCP service account used to
   # register the cluster
   registerServiceAccountKeyPath: "connect-register-sa.json"

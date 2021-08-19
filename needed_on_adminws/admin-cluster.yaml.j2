@@ -15,8 +15,8 @@ vCenter:
   caCertPath: vcenter.ca.pem
   # The credentials to connect to vCenter
   credentials:
-    username: anthos@vsphere.local
-    password: ExamplePass@456
+    username: "{{vcenter.user}}"
+    password: "{{vcenter.password}}"
   # Provide the name for the persistent disk to be used by the deployment (ending
   # in .vmdk). Any directory in the supplied path must be created before deployment
   dataDisk: "admin-disk.vmdk"
@@ -110,9 +110,9 @@ proxy:
 gcrKeyPath: anthos-allowlisted.json
 # (Optional) Specify which GCP project to connect your logs and metrics to
 stackdriver:
-  projectID: fabianleeorg
+  projectID: "{{gcp.project_id}}"
   # A GCP region where you would like to store logs and metrics for this cluster.
-  clusterLocation: "us-east1"
+  clusterLocation: "{{gcp.stackdriver_region}}"
   enableVPC: false
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster

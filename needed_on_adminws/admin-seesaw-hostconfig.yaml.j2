@@ -1,6 +1,6 @@
 # copy this to the admin workstation after completion
 hostconfig:
-  dns: "192.168.2.239"
+  dns: "{{hostvm.ip}}"
   tod: "time.google.com"
   otherdns:
   - "8.8.8.8"
@@ -11,7 +11,7 @@ hostconfig:
   - "home.lab"
 blocks:
   - netmask: "255.255.255.0"
-    gateway: "192.168.142.1"
+    gateway: "192.168.141.1"
     ips:
-    - ip: "192.168.142.248"
+    - ip: "192.168.141.251"
       hostname: "seesaw-vm"

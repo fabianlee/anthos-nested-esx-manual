@@ -7,3 +7,11 @@
     mode: 0775
   loop:
     - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/admin-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/user-seesaw-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/user-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/admin-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/admin-seesaw-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
+
