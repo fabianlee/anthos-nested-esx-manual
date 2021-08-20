@@ -87,7 +87,7 @@ loadBalancer:
 # (Optional) User cluster master nodes must have either 1 or 3 replicas (default:
 # 4 CPUs; 16384 MB memory; 1 replica)
 masterNode:
-  cpus: 2
+  cpus: 4 # validation check require at least 4, might be able to skip validation with flag
   memoryMB: 8192
   # How many machines of this type to deploy
   replicas: 1
