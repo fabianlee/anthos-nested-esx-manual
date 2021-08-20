@@ -1,8 +1,10 @@
 ansible_python_interpreter: /usr/bin/python3
 
+# nic of your KVM host, used to point VMS back to common DNS
 hostvm:
   ip: 192.168.2.109
 
+# used for gcp access
 gcp:
   project_name: anthos1
   project_id: anthos1-323418 
