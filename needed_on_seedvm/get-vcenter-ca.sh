@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 rm download.zip
 rm -fr certs
 curl -k https://vcenter.home.lab/certs/download.zip --output download.zip
