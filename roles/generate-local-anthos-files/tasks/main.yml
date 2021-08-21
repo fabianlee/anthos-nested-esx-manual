@@ -1,8 +1,8 @@
 ---
 
-- name: create templates based on group_vars/all
+- name: create templates based on group_vars/all, tailored to anthos version {{anthos_template_version}}
   template:
-    src: "{{item}}.j2"
+    src: "{{item}}.{{anthos_template_version}}.j2"
     dest: "{{item}}"
     mode: 0775
   loop:
@@ -13,6 +13,14 @@
     - "{{playbook_dir}}/needed_on_adminws/user-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/admin-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/admin-seesaw-hostconfig.yaml"
+
+- name: create templates based on group_vars/all
+  template:
+    src: "{{item}}.j2"
+    dest: "{{item}}"
+    mode: 0775
+  loop:
     - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
     - "{{playbook_dir}}/govc/source-govc-vars.sh"
+
 
