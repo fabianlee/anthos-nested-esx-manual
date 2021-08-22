@@ -72,12 +72,12 @@ while [ $admin_api_ready -eq 0 ]; do
 done
 
 
-[ -f ../gke-admin-workstation ] || { echo "ERROR did not find admin ws private key ../gke-admin-workstation"; exit 2; }
+[ -f gke-admin-workstation ] || { echo "ERROR did not find admin ws private key gke-admin-workstation"; exit 2; }
 
 banner "check for admin cluster pod readiness from inside admin workstation"
 admin_cluster_pods_ready=0
 while [ $admin_cluster_pods_ready -eq 0 ]; do
-  outstr=$(ssh -i ../gke-admin-workstation ubuntu@192.168.140.221 "kubectl --kubeconfig kubeconfig get pods -A | grep -v Running | grep -v stackdriver | grep -v vsphere-metrics")
+  outstr=$(ssh -i gke-admin-workstation ubuntu@192.168.140.221 "kubectl --kubeconfig kubeconfig get pods -A | grep -v Running | grep -v stackdriver | grep -v vsphere-metrics")
   echo "$outstr"
   nlines=$(echo "$outstr" | grep "" -c)
   if [ $nlines -le 1 ]; then
@@ -129,7 +129,7 @@ done
 banner "check for user cluster pod readiness from inside admin workstation"
 user_cluster_pods_ready=0
 while [ $user_cluster_pods_ready -eq 0 ]; do
-  outstr=$(ssh -i ../gke-admin-workstation ubuntu@192.168.140.221 "kubectl --kubeconfig user1-kubeconfig get pods -A | grep -v Running | grep -v stackdriver | grep -v vsphere-metrics")
+  outstr=$(ssh -i gke-admin-workstation ubuntu@192.168.140.221 "kubectl --kubeconfig user1-kubeconfig get pods -A | grep -v Running | grep -v stackdriver | grep -v vsphere-metrics")
   echo "$outstr"
   nlines=$(echo "$outstr" | grep "" -c)
   if [ $nlines -le 1 ]; then
