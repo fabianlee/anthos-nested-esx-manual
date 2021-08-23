@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # docker ppa changed its label, apt can fix this (apt-get cannot)
+set -ex
 sudo apt update -y
+set +ex
 
 sudo apt install jq -y
 curver=$(curl -sL https://api.github.com/repos/derailed/k9s/releases/latest | jq -r ".tag_name")
