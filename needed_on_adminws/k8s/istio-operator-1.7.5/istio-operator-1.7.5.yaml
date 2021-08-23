@@ -14,23 +14,6 @@ spec:
   profile: default
   revision: "1_7_5"
 
-  # avoid rate limit on docker hub for istio envoy proxy
-  # I get pull errors using gcr.io from microk8s (might need gcr secret)
-  # so just allow default docker.io/istio
-  #values:
-  #  global:
-  #    hub: grc.io/istio-release
-
-  #values:
-    # https://console.cloud.google.com/gcr/images/istio-release/GLOBAL
-    #pilot:
-    #  hub: gcr.io/istio-release/pilot
-    # gcr.io only has single version, not the one we need
-    #prometheus:
-    #  hub: gcr.io/istio-release/prom/promethus
-    # only on quay
-    #kiali:
-    #  hub:
   addonComponents:
     kiali:
       enabled: false
@@ -81,8 +64,9 @@ spec:
               name: istio-ingressgateway
               patches:
                 - path: spec.loadBalancerIP
-                  value: 192.168.125.25
+                  value: 192.168.142.253
+                # not using MetalLB, so do not need this
                 # needs to match MetalLB endpoint
-                - path: spec.loadBalancerSourceRanges
-                  value: [ 10.0.0.0/8, 192.0.0.0/8 ]
+                #- path: spec.loadBalancerSourceRanges
+                #  value: [ 10.0.0.0/8, 192.0.0.0/8 ]
 

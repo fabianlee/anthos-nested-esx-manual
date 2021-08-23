@@ -101,4 +101,3 @@
       set foldlevelstart=20
       set foldmethod=indent
       nnoremap <space> za
-
