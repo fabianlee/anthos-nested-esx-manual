@@ -2,8 +2,13 @@
 #
 # creates self-signed cert
 
-# make sure package is installed
-# older
+# makes sure apt is healthy
+set -ex
+sudo apt update -y
+set +ex
+
+# install libssl
+# older ubuntu versions
 sudo apt-get install libssl1.0.0 -y
 # newer like Ubuntu20 focal
 sudo apt-get install libssl1.1 -y
