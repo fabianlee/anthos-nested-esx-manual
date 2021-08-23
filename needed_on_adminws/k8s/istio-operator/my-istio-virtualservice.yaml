@@ -2,20 +2,18 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: my-service-on-istio-gateway
+  name: my-virtualservice
 spec:
   hosts:
-    - anthos.home.lab
+  - "*"
   gateways:
-  - gateway-ingressgateway
+  - istio-system/istio-ingressgateway
   http:
   - match:
     - uri:
         prefix: /istio
-        #exact: /
     route:
     - destination:
-        host: my-service # service name
+        host: my-istio-service
         port:
-          number: 80 # port offered up by service
-
+          number: 80 # port exposed by my-istio-service
