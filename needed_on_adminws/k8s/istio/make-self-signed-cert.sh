@@ -21,6 +21,11 @@ echo "going to create certs: $certs"
 
 for FQDN in $certs;  do 
 
+  if [ -f $FQDN.key ]; then
+    echo "WARNING already have a self-signed key for $FQDN in this directory, delete it first if you want it recreated"
+    exit 3
+  fi
+
   # create self-signed cert
   sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
   -keyout $FQDN.key -out $FQDN.crt \
