@@ -17,5 +17,5 @@ spec:
     - destination:
         host: my-service # service name
         port:
-          number: 80 # port offered up by service (not pod port)
+          number: 80 # port offered up by service
 
