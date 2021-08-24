@@ -49,7 +49,7 @@
     dest: "/home/ubuntu/.bash_profile"
     owner: ubuntu
     group: ubuntu
-    mode: 0331
+    mode: 0664
     content: |
       export KUBECONFIG=/home/ubuntu/user1-kubeconfig
       alias lsl='ls -latr'
