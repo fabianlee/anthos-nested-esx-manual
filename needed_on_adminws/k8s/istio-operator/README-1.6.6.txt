@@ -1,4 +1,6 @@
+#
 # To remove the OOTB istio that comes with Anthos 1.4 and replace with a full 1.6.6 istio operator
+#
 
 # remove my istio components
 cd ~/k8s
@@ -58,4 +60,52 @@ Version: 1.0.0
 Hostname: my-istio-deployment-d6cbc8689-cmtxx
 
 
+#
+# before upgrading to 1.7.5
+#
+# canary is not suported wit non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
 
+# make pilot addon explicit, and make control plane revision '1-6-6' for istiod and  istiosidecareinjector
+kubectl apply -f istio-operator-1.6.6-beforeupgrade.yaml
+
+# make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
+./namespace-labels-for-1.7.5.sh
+
+# but notice that IstioOperators is still at 1-6-6
+# read: https://istio.io/latest/docs/setup/install/operator/#canary-upgrade
+#
+kubectl get -n istio-system iop
+NAME                  REVISION   AGE
+istio-control-plane   1-6-6      87m
+
+# labels and image still reflect 1.6.6
+$ kubectl describe -n istio-operator deployment/istio-operator
+
+Labels:                 install.operator.istio.io/owning-resource=
+                        install.operator.istio.io/owning-resource-namespace=
+                        operator.istio.io/component=IstioOperator
+                        operator.istio.io/managed=Reconcile
+                        operator.istio.io/version=1.6.6
+
+   istio-operator:
+    Image:      docker.io/istio/operator:1.6.6
+
+
+#
+# upgrading to 1.7.5
+#
+
+
+cd ~/k8s
+export istiover=1.7.5
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
+
+istio-$istiover/bin/istioctl x precheck
+istio-$istiover/bin/istioctl operator init
+
+istio-$istiover/bin/istioctl install --revision 1-7-5
+
+
+
+removing the old operator revision
+istioctl operator remove --revision <revision>
