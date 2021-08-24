@@ -8,7 +8,9 @@
     docker_member_group: "ubuntu"
 
   roles:
+    - fix-google-apt-key
     - k9s
     - govc-cli
     - docker
+    - anthos-adminws-prereq
 

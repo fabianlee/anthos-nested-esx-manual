@@ -1,4 +1,8 @@
 ---
+
+- name: fix google pulic key
+  import_tasks: fix-apt-google-pubkey.yml
+
 # https://cloud.google.com/sdk/docs/install#deb
 
 - name: prereq packages

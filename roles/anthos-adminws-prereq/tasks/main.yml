@@ -1,0 +1,63 @@
+---
+
+- name: fix google public key
+  include_role:
+    name: kubectl-gcloud-apt
+    tasks_from: fix-apt-google-pubkey.yml
+
+- name: install list of packages, debian based
+  apt:
+    pkg:
+    - net-tools # netstat
+    - jq # json tool
+    - vim
+    - curl
+    - whois
+    - zip
+    - unzip
+    - ntpdate
+    - netcat
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: update editor preferences, Ubuntu
+  command: /usr/bin/update-alternatives --set editor /usr/bin/vim.basic
+  register: command_result
+  changed_when: "command_result.stdout != ''"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+#- debug: msg="{{command_result}}"
+
+#- name: update python preferences, Ubuntu
+#  command: update-alternatives --install /usr/bin/python python /usr/bin/python3 20
+#  register: command_result
+#  changed_when: "command_result.stdout != ''"
+#  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+#- debug: msg="{{command_result}}"
+
+- name: vimrc skeleton
+  copy:
+    dest: /etc/skel/.vimrc
+    content: |
+      colorscheme desert
+      syntax on
+      set paste
+      set ruler
+      autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab number autoindent
+      autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab autoindent
+      set foldenable
+      set foldlevelstart=20
+      set foldmethod=indent
+      nnoremap <space> za
+
+- name: default .bash_profile
+  copy:
+    dest: "/home/ubuntu/.bash_profile"
+    user: ubuntu
+    group: ubuntu
+    mode: 0331
+    content: |
+      export KUBECONFIG=/home/ubuntu/user1-kubeconfig
+      alias lsl='ls -latr'
+      export EDITOR=vim
+      export VISUAL=vim
+

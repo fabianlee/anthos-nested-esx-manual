@@ -1,0 +1,6 @@
+---
+
+- name: fix google public key
+  include_role:
+    name: kubectl-gcloud-apt
+    tasks_from: fix-apt-google-pubkey.yml
