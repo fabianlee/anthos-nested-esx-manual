@@ -15,5 +15,10 @@ export GOVC_PASSWORD={{vcenter.password}}
 # disable cert validation
 export GOVC_INSECURE=true
 
-govc ls /
-govc datacenter.info
+nc -w 1 -vz $GOVC_URL 443
+if [ $? -eq 0 ]; then
+  govc ls /
+  govc datacenter.info
+else
+  echo "WARN: it does not appear that vCenter is ready at $GOVC_URL:443"
+fi
