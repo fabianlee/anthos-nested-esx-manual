@@ -69,7 +69,7 @@ Hostname: my-istio-deployment-d6cbc8689-cmtxx
 kubectl apply -f istio-operator-1.6.6-beforeupgrade.yaml
 
 # make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
-./namespace-labels-for-1.7.5.sh
+./namespace-labels-for-1.6.6-modernize.sh
 
 # but notice that IstioOperators is still at 1-6-6
 # read: https://istio.io/latest/docs/setup/install/operator/#canary-upgrade
@@ -77,6 +77,17 @@ kubectl apply -f istio-operator-1.6.6-beforeupgrade.yaml
 kubectl get -n istio-system iop
 NAME                  REVISION   AGE
 istio-control-plane   1-6-6      87m
+
+# labels and image still reflect 1.6.6
+$ kubectl describe -n istio-system deployment/istio-ingressgateway
+ Labels:           app=istio-ingressgateway
+                    chart=gateways
+                    heritage=Tiller
+                    istio=ingressgateway
+                    release=istio
+                    service.istio.io/canonical-name=istio-ingressgateway
+                    service.istio.io/canonical-revision=1-6-6
+Image:       docker.io/istio/proxyv2:1.6.6
 
 # labels and image still reflect 1.6.6
 $ kubectl describe -n istio-operator deployment/istio-operator
@@ -91,9 +102,24 @@ Labels:                 install.operator.istio.io/owning-resource=
     Image:      docker.io/istio/operator:1.6.6
 
 
+# spec.Revision still reflect 1.6.6
+$ kubectl describe -n istio-system iop/istio-control-plane
+Name:         istio-control-plane
+Namespace:    istio-system
+Labels:       <none>
+...
+Spec:
+...
+  Profile:                default
+  Revision:               1-6-6
+
+
+
 #
 # upgrading to 1.7.5
 #
+# https://istio.io/v1.7/docs/setup/upgrade/
+# https://banzaicloud.com/blog/istio-canary-upgrade/
 
 
 cd ~/k8s
@@ -101,11 +127,58 @@ export istiover=1.7.5
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
-istio-$istiover/bin/istioctl operator init
 
-istio-$istiover/bin/istioctl install --revision 1-7-5
+# canary upgrade of control plane: new operator-<rev>, istiod-<rev>, istio-sidecar-injector-<rev>
+# the part I do not understand is that the istio-ingressgateway is also upgraded
+# I wouldn't expect that as a canary upgrade
+istio-$istiover/bin/istioctl operator init --revision 1-7-5
 
 
+# two istio operators
+$ kubectl get deployments -n istio-operator
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+istio-operator         1/1     1            1           8h
+istio-operator-1-7-5   1/1     1            1           91s
 
-removing the old operator revision
+# still only single control plane (when does this get upgraded?)
+$ kubectl get -n istio-system iop
+NAME                  REVISION   STATUS        AGE
+istio-control-plane   1-6-6      RECONCILING   8h
+
+# ingress gateway is now at 1.7.5
+$ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels -A10
+  Labels:           app=istio-ingressgateway
+                    chart=gateways
+                    heritage=Tiller
+                    istio=ingressgateway
+                    release=istio
+                    service.istio.io/canonical-name=istio-ingressgateway
+                    service.istio.io/canonical-revision=1-7-5
+Image:       docker.io/istio/proxyv2:1.7.5
+
+
+# change istio.io/rev labels to new version
+cd ~/k8s/istio-operator
+./namespace-labels-for-1.7.5.sh
+
+# now try rolling deployment restart
+kubectl rollout restart -n default deployment/my-istio-deployment
+# to do entire namespace!
+# kubectl rollout restart deployment -n default
+
+# envoy proxy now at new version
+$ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
+    Image:         docker.io/istio/proxyv2:1.7.5
+    Image:          gcr.io/google-samples/hello-app:1.0
+    Image:         docker.io/istio/proxyv2:1.7.5
+    Image:         docker.io/istio/proxyv2:1.7.5
+    Image:          gcr.io/google-samples/hello-app:1.0
+    Image:         docker.io/istio/proxyv2:1.7.5
+
+
+# removing the old operator revision, will this work for our non revision 1.6.6 op?
 istioctl operator remove --revision <revision>
+# because otherwise we can consider
+kubectl delete istiooperators.install.istio.io -n istio-system istio-control-plane
+
+
