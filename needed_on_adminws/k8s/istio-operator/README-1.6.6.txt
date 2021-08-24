@@ -1,7 +1,5 @@
 # To remove the OOTB istio that comes with Anthos 1.4 and replace with a full 1.6.6 istio operator
 
-==going from article to istio 1.6.6 operator
-
 # remove my istio components
 cd ~/k8s
 kubectl delete -f istio-ootb/my-istio-virtualservice.yaml
@@ -58,5 +56,6 @@ $ curl -k https://anthos.home.lab/istio
 Hello, world!
 Version: 1.0.0
 Hostname: my-istio-deployment-d6cbc8689-cmtxx
+
 
 

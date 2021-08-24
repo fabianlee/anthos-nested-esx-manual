@@ -6,15 +6,21 @@ metadata:
   name: istio-control-plane
 spec:
   profile: default
+  # CHANGED: should have installed with revision so canary upgrades possible
+  # but settting it now and doing kubectl apply will still create data plane with revisions:
+  #   service/istiod-1-6-6
+  #   Mutatingwebhookconfigurations/istio-sidecar-injector-1-6-6
+  #
+  # service/istio-ingressgateway will not change
   # should install with revision so canary upgrades possible
-  #revision: 1-6-6
+  revision: 1-6-6
 
   addonComponents:
     kiali:
       enabled: true
     grafana:
       enabled: true
-    ### IMPORTANT: need to enable pilot addon before moving to 1.7.5
+    ### CHANGED: need to enable pilot addon before moving to 1.7.5
     # else the ingress gateway does not upgrade which blocks the upgrade process
     pilot:
       enabled: true
