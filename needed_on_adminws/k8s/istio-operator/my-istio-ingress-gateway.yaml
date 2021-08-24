@@ -6,7 +6,7 @@ metadata:
   namespace: istio-system
 spec:
   selector:
-    istio: ingressgateway # selector is istio=ingressgateway (not name of deployment)
+    istio: ingressgateway # use selector of ingress gateway, not deployment name 'istio-ingressgateway'
   servers:
   - port:
       number: 80
@@ -16,7 +16,7 @@ spec:
     # You would need to use '*' in Gateway, and specify hostnames at VirtualService instead
     # https://cloud.google.com/security/encryption-in-transit#secure_backend_protocol_considerations
     hosts:
-      - anthos.home.lab
+      - '*'
   - port:
       name: https
       number: 443
@@ -27,5 +27,4 @@ spec:
     # NOTE: if using GCP GFE, SNI names are not passed through. 
     # You would need to use '*' in Gateway, and specify hostnames at VirtualService instead
     hosts:
-      - anthos.home.lab
-
+      - '*'

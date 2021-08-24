@@ -1,0 +1,38 @@
+# deploying on first cluster:
+#   https://cloud.google.com/anthos/clusters/docs/on-prem/1.4/how-to/deploy-first-app?hl=he
+# source for hello-app
+#   https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/tree/master/hello-app
+#
+#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-istio-service
+  labels:
+    app: my-istio-service
+spec:
+  ports:
+  - port: 8080 # port now provided by service
+    targetPort: 8080 # port on pod
+    name: http
+  selector:
+    app: my-istio-deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-istio-deployment
+spec:
+  selector:
+    matchLabels:
+      app: my-istio-deployment
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: my-istio-deployment
+    spec:
+      containers:
+      - name: my-istio-deployment
+        image: "gcr.io/google-samples/hello-app:1.0"
