@@ -5,6 +5,9 @@ esxi1 ansible_host=192.168.140.236 ansible_user=root ansible_ssh_pass=ExamplePas
 [anthos_seedvm]
 seedvm ansible_host=192.168.140.220
 
+[anthos_adminws]
+adminws ansible_host=192.168.140.221 ansible_ssh_private_key_file=needed_on_adminws/gke-admin-workstation
+
 [all:vars]
 ansible_user=ubuntu
 #ansible_ssh_pass=*****

@@ -1,0 +1,14 @@
+---
+
+- hosts: anthos_adminws
+  gather_facts: yes
+  become: yes
+  vars:
+    # add all in this group to 'docker' group
+    docker_member_group: "ubuntu"
+
+  roles:
+    - k9s
+    - govc-cli
+    - docker
+
