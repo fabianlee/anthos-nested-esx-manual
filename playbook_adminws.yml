@@ -9,8 +9,8 @@
 
   roles:
     - fix-google-apt-key
+    - anthos-adminws-prereq
     - k9s
     - govc-cli
     - docker
-    - anthos-adminws-prereq
 

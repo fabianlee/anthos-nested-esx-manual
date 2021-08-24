@@ -8,6 +8,7 @@
     docker_member_group: "ubuntu"
 
   roles:
+    - fix-google-apt-key
     - anthos-seedvm-prereq
     - kubectl-gcloud-apt
     - k9s

@@ -1,10 +1,5 @@
 ---
 
-- name: fix google public key
-  include_role:
-    name: kubectl-gcloud-apt
-    tasks_from: fix-apt-google-pubkey.yml
-
 - name: install list of packages, debian based
   apt:
     pkg:
@@ -52,7 +47,7 @@
 - name: default .bash_profile
   copy:
     dest: "/home/ubuntu/.bash_profile"
-    user: ubuntu
+    owner: ubuntu
     group: ubuntu
     mode: 0331
     content: |
