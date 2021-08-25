@@ -15,8 +15,17 @@
     shell: /bin/bash
     state: present
 
-- name: remove any older docker packages
-  package:
+# etc/apt/sources.list.d/docker-ppa.list will change because label change in ppa
+# it will need to be rewritten by apt to:
+# deb http://ppa.launchpad.net/cloud-images/docker1903-k8s/ubuntu bionic main
+- name: do apt update to fix issues with docker ppa changing label (apt-get will not fix)
+  command:
+      cmd: apt update -y
+  register: apt_result
+  fail_when: not apt_result.rc in [0,1]
+
+- name: remove any older docker packages, using apt to make sure apt-get is not used
+  apt:
     name:
       - docker
       - docker-engine
