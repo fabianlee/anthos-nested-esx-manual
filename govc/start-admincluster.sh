@@ -1,8 +1,19 @@
 #!/bin/bash
 
-govc ls /mydc1/vm/seesaw-for-gke-admin*
+echo admin cluster seesaw
+for targetvm in $(govc ls /mydc1/vm/seesaw-for-gke-admin*); do
+  echo going to power on $targetvm
+  govc vm.power -on $targetvm
+  sleep 1
+done
 
-govc ls /mydc1/vm/gke-admin*
+echo admin cluster master control plane
+for targetvm in $(govc ls /mydc1/vm/gke-admin*); do
+  echo going to power on $targetvm
+  govc vm.power -on $targetvm
+  sleep 1
+done
 
-govc ls /mydc1/vm/user1-*
+echo user cluster control plan
+govc vm.power -on $(govc ls /mydc1/vm/user1-*)
 
