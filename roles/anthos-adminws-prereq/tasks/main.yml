@@ -1,5 +1,15 @@
 ---
 
+- name: disable Ubuntu auto-update
+  copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      APT::Periodic::Update-Package-Lists "0";
+      APT::Periodic::Unattended-Upgrade "0";
+
 - name: install list of packages, debian based
   apt:
     pkg:
