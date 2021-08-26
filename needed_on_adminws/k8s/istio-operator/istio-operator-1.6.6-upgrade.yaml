@@ -11,9 +11,15 @@ spec:
   #   service/istiod-1-6-6
   #   Mutatingwebhookconfigurations/istio-sidecar-injector-1-6-6
   #
-  # service/istio-ingressgateway will not change
-  # should install with revision so canary upgrades possible
+  # CHANGED: should have installed with revision so canary upgrades possible
+  # but settting it now and doing kubectl apply will still create data plane with revisions:
   revision: 1-6-6
+
+  # CHANGED: if you want to avoid rate pull limit on the sidecar, the most used piece of istio
+#  values:
+#    global:
+#      proxy:
+#        image: grc.io/istio-release/proxyv2:1.6.6
 
   addonComponents:
     kiali:
