@@ -1,2 +1,3 @@
-# generated
+# generated from .j2 versions
 source-govc-vars.sh
+start-vcenter-from-esxi.sh

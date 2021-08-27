@@ -59,6 +59,19 @@ Hello, world!
 Version: 1.0.0
 Hostname: my-istio-deployment-d6cbc8689-cmtxx
 
+# notice no revision yet
+$ kubectl get -n istio-system iop
+NAME                  REVISION   AGE
+istio-control-plane              25h
+$ kubectl get deployments -n istio-system
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+grafana                1/1     1            1           25h
+istio-ingressgateway   1/1     1            1           25h
+istiod                 1/1     1            1           59s
+kiali                  1/1     1            1           25h
+prometheus             1/1     1            1           25h
+
+
 
 #
 # before upgrading to 1.7.5
@@ -69,7 +82,7 @@ Hostname: my-istio-deployment-d6cbc8689-cmtxx
 kubectl apply -f istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
 
 # make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
-./namespace-labels-for-1.6.6-modernize.sh
+./namespace-labels-for-1.6.6-beforeupgrade-1.7.5.yaml
 
 # but notice that IstioOperators is still at 1-6-6
 # read: https://istio.io/latest/docs/setup/install/operator/#canary-upgrade
@@ -79,7 +92,7 @@ NAME                  REVISION   AGE
 istio-control-plane   1-6-6      87m
 
 # labels and image still reflect 1.6.6
-$ kubectl describe -n istio-system deployment/istio-ingressgateway
+$ kubectl describe -n istio-system deployment/istio-ingressgateway | grep 'Labels:' -C10
  Labels:           app=istio-ingressgateway
                     chart=gateways
                     heritage=Tiller
@@ -90,7 +103,7 @@ $ kubectl describe -n istio-system deployment/istio-ingressgateway
 Image:       docker.io/istio/proxyv2:1.6.6
 
 # labels and image still reflect 1.6.6
-$ kubectl describe -n istio-operator deployment/istio-operator
+$ kubectl describe -n istio-operator deployment/istio-operator  | grep 'Labels:' -C10
 
 Labels:                 install.operator.istio.io/owning-resource=
                         install.operator.istio.io/owning-resource-namespace=
@@ -103,7 +116,7 @@ Labels:                 install.operator.istio.io/owning-resource=
 
 
 # spec.Revision still reflect 1.6.6
-$ kubectl describe -n istio-system iop/istio-control-plane
+$ kubectl describe -n istio-system iop/istio-control-plane | grep Revision -C2
 Name:         istio-control-plane
 Namespace:    istio-system
 Labels:       <none>
@@ -112,6 +125,10 @@ Spec:
 ...
   Profile:                default
   Revision:               1-6-6
+
+$ kubectl get mutatingwebhookconfiguration
+NAME                           CREATED AT
+istio-sidecar-injector-1-6-6   2021-08-27T00:18:35Z
 
 
 
@@ -145,7 +162,7 @@ $ kubectl get -n istio-system iop
 NAME                  REVISION   STATUS        AGE
 istio-control-plane   1-6-6      RECONCILING   8h
 
-# ingress gateway is now at 1.7.5
+# but ingress gateway is now at 1.7.5 (so ingress gateway switches immediately even in canary upgrade?)
 $ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels -A10
   Labels:           app=istio-ingressgateway
                     chart=gateways
@@ -155,6 +172,13 @@ $ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels
                     service.istio.io/canonical-name=istio-ingressgateway
                     service.istio.io/canonical-revision=1-7-5
 Image:       docker.io/istio/proxyv2:1.7.5
+
+# both versions
+$ kubectl get mutatingwebhookconfiguration
+NAME                           CREATED AT
+istio-sidecar-injector-1-6-6   2021-08-27T00:18:35Z
+istio-sidecar-injector-1-7-5   2021-08-27T00:18:35Z
+
 
 
 # change istio.io/rev labels to new version
@@ -177,8 +201,15 @@ $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 
 # removing the old operator revision, will this work for our non revision 1.6.6 op?
-istioctl operator remove --revision <revision>
-# because otherwise we can consider
-kubectl delete istiooperators.install.istio.io -n istio-system istio-control-plane
+cd ~/k8s
+
+# do NOT do this for a canary upgrade it deletes all the objects in 'istio-operator' (e.g. iop)
+# however it leaves all the control plane objects in 'istio-system'
+# had to clear 'finalizer' field for iop before it finished
+# istio-istioctl operator remove --revision <revision>
+
+# try this instead next time
+$ kubectl delete istiooperators.install.istio.io -n istio-system istio-control-plane
+istiooperator.install.istio.io "istio-control-plane" deleted
 
 
