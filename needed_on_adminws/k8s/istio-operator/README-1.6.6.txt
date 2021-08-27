@@ -19,8 +19,8 @@ export istiover=1.6.6
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
+# NOTE 1.6.6 did NOT have a concept of '--revision 1-6-6', that came with 1.7
 istio-$istiover/bin/istioctl operator init
-
 
 kubectl get all -n istio-operator
 kubectl create ns istio-system
@@ -146,8 +146,10 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 istio-$istiover/bin/istioctl x precheck
 
 # canary upgrade of control plane: new operator-<rev>, istiod-<rev>, istio-sidecar-injector-<rev>
-# the part I do not understand is that the istio-ingressgateway is also upgraded
-# I wouldn't expect that as a canary upgrade
+# the istio-system iop/istio-control-plane revision does NOT change
+# the ns/istio-operator label istio.io/rev=1-7-8
+# the part I do not understand is that the istio-system services/istio-ingressgateway is rolling upgraded
+# I wouldn't expect that as a canary upgrade, I thought it would be part of a switchover
 istio-$istiover/bin/istioctl operator init --revision 1-7-5
 
 
