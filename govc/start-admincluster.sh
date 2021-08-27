@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo admin workstation
+govc vm.power -on $(govc ls /mydc1/vm/admin-ws/gke-admin-ws-*)
+
 echo admin cluster seesaw
 for targetvm in $(govc ls /mydc1/vm/seesaw-for-gke-admin*); do
   echo going to power on $targetvm
