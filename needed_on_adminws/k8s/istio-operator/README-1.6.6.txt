@@ -65,8 +65,8 @@ Hostname: my-istio-deployment-d6cbc8689-cmtxx
 #
 # canary is not suported wit non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
 
-# make pilot addon explicit, and make control plane revision '1-6-6' for istiod and  istiosidecareinjector
-kubectl apply -f istio-operator-1.6.6-beforeupgrade.yaml
+# make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
+kubectl apply -f istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
 
 # make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
 ./namespace-labels-for-1.6.6-modernize.sh

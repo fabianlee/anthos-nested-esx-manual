@@ -1,4 +1,4 @@
-g!/bin/bash
+#!/bin/bash
 #
 # Evaluates health of admin cluster and user cluster
 #
