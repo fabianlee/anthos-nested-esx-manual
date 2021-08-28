@@ -103,6 +103,9 @@ istiod-1-7-5           ClusterIP      10.96.233.231   <none>            15010/TC
 
 
 
+
+
+
 # now do upgrade to 1.7.6
 cd ~/k8s
 export istiover=1.7.6
@@ -113,6 +116,7 @@ istio-$istiover/bin/istioctl operator init --revision 1-7-6
 # this changes revision in iop
 kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
 
+# wait till 'Pruning removed resources'
 istio-operator/show-istio-operator-logs.sh
 
 # then wait for all components to be 'Running'
@@ -140,17 +144,12 @@ istio-operator/namespace-labels-for-1.x.sh 1-7-6
 # rolling deployment restart
 kubectl rollout restart -n default deployment/my-istio-deployment
 
-# envoy proxy now at new version
+# envoy proxy now at new version, wait till app proxy are at 1.7.6
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
-
-
-
-
-
-# uninstall the old control plan?
-istio-1.7.5/bin/istioctl x uninstall --revision 1-7-5
-
+#
+# uninstall the old control plan
+#
 $ istio-1.7.5/bin/istioctl x uninstall --revision 1-7-5
   Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-5.
   Removed PodDisruptionBudget:istio-system:istiod-1-7-5.
@@ -181,35 +180,95 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
 
 
 
-
-
-# removing the old operator revision, will this work for our non revision 1.6.6 op?
+#
+# now do upgrade to 1.7.8
+#
 cd ~/k8s
+export istiover=1.7.8
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
+istio-$istiover/bin/istioctl x precheck
 
-# do NOT do this for a canary upgrade it deletes all the objects in 'istio-operator' (e.g. iop)
-# however it leaves all the control plane objects in 'istio-system'
-# had to clear 'finalizer' field for iop before it finished
-# istio-istioctl operator remove --revision <revision>
-
-# try this instead next time
-$ kubectl delete istiooperators.install.istio.io -n istio-system istio-control-plane
-istiooperator.install.istio.io "istio-control-plane" deleted
-
-
-# canary upgrade of control plane: new operator-<rev>, istiod-<rev>, istio-sidecar-injector-<rev>
-# the istio-system iop/istio-control-plane revision does NOT change
-# the ns/istio-operator label istio.io/rev=1-7-8
-# the part I do not understand is that the istio-system services/istio-ingressgateway is rolling upgraded
-# I wouldn't expect that as a canary upgrade, I thought it would be part of a switchover
+$ istio-$istiover/bin/istioctl operator init --revision 1-7-8
+Using operator Deployment image: docker.io/istio/operator:1.7.8
+2021-08-28T13:42:02.892856Z	info	proto: tag has too few fields: "-"
+✔ Istio operator installed                                                                                              
+✔ Installation complete
 
 
-# removes objects generated as part of 1.7.5
-# but this removed multiple versions of istio
-istio-1.7.5/bin/istioctl manifest generate --revision 1-7-5 | kubectl delete -f -
+$ kubectl get deployments -n istio-operator
+istio-operator-1-7-6   1/1     1            1           51m
+istio-operator-1-7-8   1/1     1            1           43s
 
-# removes istio-operator deployment/istio-operator-1-7-5, 
-# but leaves istio-system deployment/istiod-1-7-5
-s# and leaves Mutatingwebhookconfigurations/istio-sidecar-injector-1-7-5
-istio-1.7.5/bin/istioctl operator remove --revision 1-7-5
+
+# this changes revision in iop
+kubectl apply -f istio-operator/istio-operator-1.7.8.yaml
+
+# wait till 'Pruning removed resources'
+istio-operator/show-istio-operator-logs.sh
+
+# then wait for all components to be 'Running'
+watch -n2 kubectl get pods -n istio-system
+NAME                                    READY   STATUS    RESTARTS   AGE
+istio-ingressgateway-6bdd7687b6-86cls   1/1     Running   0          2m22s
+istiod-1-7-6-649b69468-ptjrj            1/1     Running   0          2m34s
+istiod-1-7-8-64ff4f6869-w4tqt           1/1     Running   0          25m
+
+# control plane (either command works)
+$ kubectl get -n istio-system iop
+$ kubectl get istiooperators.install.istio.io -n istio-system istio-control-plane
+NAME                  REVISION   STATUS        AGE
+istio-control-plane   1-7-8      HEALTHY   8h
+
+# 'istio-ingressgateway' will be on EXTERNAL-IP
+$ kubectl get services -n istio-system
+istio-ingressgateway   LoadBalancer   10.96.233.110   192.168.142.253   15021:32236/TCP,80:32600/TCP,443:32601/TCP,31400:31475/TCP,15443:31837/TCP   69m
+istiod-1-7-6           ClusterIP      10.96.233.231   <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                69m
+istiod-1-7-8           ClusterIP      10.96.233.63    <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                25m
+
+# apply namespace label istio.io/rev
+istio-operator/namespace-labels-for-1.x.sh 1-7-8
+
+# rolling deployment restart
+kubectl rollout restart -n default deployment/my-istio-deployment
+
+# envoy proxy now at new version, wait till app proxy are at 1.7.8
+$ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
+
+#
+# uninstall the old control plan
+#
+# will see both 1-7-6 and 1-7-8 control planes
+$ istio-operator/show-istio-versions.sh
+$ istio-1.7.6/bin/istioctl x uninstall --revision 1-7-6
+  Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-5.
+  Removed PodDisruptionBudget:istio-system:istiod-1-7-5.
+  Removed Deployment:istio-operator:istio-operator-1-7-5.
+  Removed Deployment:istio-system:istiod-1-7-5.
+  Removed Service:istio-operator:istio-operator-1-7-5.
+  Removed Service:istio-system:istiod-1-7-5.
+  Removed ConfigMap:istio-system:istio-1-7-5.
+  Removed ConfigMap:istio-system:istio-sidecar-injector-1-7-5.
+  Removed ServiceAccount:istio-operator:istio-operator-1-7-5.
+  Removed EnvoyFilter:istio-system:metadata-exchange-1.6-1-7-5.
+  Removed EnvoyFilter:istio-system:metadata-exchange-1.7-1-7-5.
+  Removed EnvoyFilter:istio-system:stats-filter-1.6-1-7-5.
+  Removed EnvoyFilter:istio-system:stats-filter-1.7-1-7-5.
+  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.6-1-7-5.
+  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.7-1-7-5.
+  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.6-1-7-5.
+  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.7-1-7-5.
+  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
+object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being deleted because it no longer exists
+  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
+✔ Uninstall complete                                          
+
+# now all 1-7-6 should be gone
+$ istio-operator/show-istio-versions.sh
+
+
+
+
+
+
 
 
