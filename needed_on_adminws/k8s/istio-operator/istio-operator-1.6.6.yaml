@@ -9,6 +9,16 @@ spec:
   # should install with revision so canary upgrades possible
   #revision: 1-6-6
 
+  # avoid rate pull limits from docker.io
+  # https://istio.io/latest/blog/2020/docker-rate-limit/
+  values:
+    global:
+      hub: gcr.io/istio-release
+      tag: 1-6-6
+      #proxy:
+      #  image: gcr.io/istio-release/proxyv2:1.6.6
+      #imagePullSecrets: []
+
   addonComponents:
     kiali:
       enabled: true

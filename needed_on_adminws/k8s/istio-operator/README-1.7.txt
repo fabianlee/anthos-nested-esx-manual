@@ -143,6 +143,7 @@ istio-operator/namespace-labels-for-1.x.sh 1-7-6
 
 # rolling deployment restart
 kubectl rollout restart -n default deployment/my-istio-deployment
+kubectl rollout status deployment my-istio-deployment
 
 # envoy proxy now at new version, wait till app proxy are at 1.7.6
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
@@ -150,6 +151,10 @@ $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 #
 # uninstall the old control plan
 #
+
+# will see both 1-7-5 and 1-7-6 control planes
+$ istio-operator/show-istio-versions.sh
+
 $ istio-1.7.5/bin/istioctl x uninstall --revision 1-7-5
   Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-5.
   Removed PodDisruptionBudget:istio-system:istiod-1-7-5.
@@ -173,7 +178,8 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
   Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
 ✔ Uninstall complete                                          
 
-
+# only 1-7-6 will be present
+$ istio-operator/show-istio-versions.sh
 
 
 
@@ -230,6 +236,7 @@ istio-operator/namespace-labels-for-1.x.sh 1-7-8
 
 # rolling deployment restart
 kubectl rollout restart -n default deployment/my-istio-deployment
+kubectl rollout status deployment my-istio-deployment
 
 # envoy proxy now at new version, wait till app proxy are at 1.7.8
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
@@ -239,6 +246,7 @@ $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 #
 # will see both 1-7-6 and 1-7-8 control planes
 $ istio-operator/show-istio-versions.sh
+
 $ istio-1.7.6/bin/istioctl x uninstall --revision 1-7-6
   Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-5.
   Removed PodDisruptionBudget:istio-system:istiod-1-7-5.
@@ -262,7 +270,7 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
   Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
 ✔ Uninstall complete                                          
 
-# now all 1-7-6 should be gone
+# only 1-7-8 will be present
 $ istio-operator/show-istio-versions.sh
 
 

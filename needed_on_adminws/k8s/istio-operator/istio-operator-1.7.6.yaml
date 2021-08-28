@@ -14,6 +14,12 @@ spec:
   profile: default
   revision: "1-7-6"
 
+  # avoid rate pull limits from docker.io
+  # https://istio.io/latest/blog/2020/docker-rate-limit/
+  values:
+    global:
+      hub: gcr.io/istio-release
+
   addonComponents:
     kiali:
       enabled: false
