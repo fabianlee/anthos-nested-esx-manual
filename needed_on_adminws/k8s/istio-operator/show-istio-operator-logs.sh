@@ -22,4 +22,4 @@ POD_HASH_LABEL=`kubectl get rs -n istio-operator $RS_NAME -o jsonpath="{.metadat
 
 POD_NAMES=`kubectl get pods -n istio-operator -l pod-template-hash=$POD_HASH_LABEL --show-labels | tail -n +2 | awk '{print $1}'`; echo $POD_NAMES
 
-kubectl logs --since=25m -f -n istio-operator $POD_NAMES
+kubectl logs --since=10m -f -n istio-operator $POD_NAMES
