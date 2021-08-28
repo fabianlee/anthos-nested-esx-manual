@@ -1,4 +1,4 @@
-#
+f#
 # To remove the OOTB istio that comes with Anthos 1.4 and replace with a full 1.6.6 istio operator
 #
 
@@ -82,7 +82,7 @@ prometheus             1/1     1            1           25h
 kubectl apply -f istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
 
 # make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
-./namespace-labels-for-1.6.6-beforeupgrade-1.7.5.yaml
+./namespace-labels-for-1.x.sh 1-7-5
 
 # but notice that IstioOperators is still at 1-6-6
 # read: https://istio.io/latest/docs/setup/install/operator/#canary-upgrade
@@ -148,8 +148,7 @@ istio-$istiover/bin/istioctl x precheck
 # canary upgrade of control plane: new operator-<rev>, istiod-<rev>, istio-sidecar-injector-<rev>
 # the istio-system iop/istio-control-plane revision does NOT change
 # the ns/istio-operator label istio.io/rev=1-7-8
-# the part I do not understand is that the istio-system services/istio-ingressgateway is rolling upgraded
-# I wouldn't expect that as a canary upgrade, I thought it would be part of a switchover
+# and as describe here the istio gateways are upgraded in-place with the control plane (https://istio.io/v1.7/docs/setup/upgrade/#data-plane)
 istio-$istiover/bin/istioctl operator init --revision 1-7-5
 
 
@@ -185,7 +184,7 @@ istio-sidecar-injector-1-7-5   2021-08-27T00:18:35Z
 
 # change istio.io/rev labels to new version
 cd ~/k8s/istio-operator
-./namespace-labels-for-1.7.5.sh
+./namespace-labels-for-1.x.sh 1-7-5
 
 # now try rolling deployment restart
 kubectl rollout restart -n default deployment/my-istio-deployment
