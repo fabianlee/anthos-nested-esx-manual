@@ -15,7 +15,7 @@ for ns in default istio-system istio-operator; do
 done
 kubectl get namespace -L istio-injection
  
-# default should have '1-7-5'
+# set newer 'istio.io.rev' label
 for ns in default ; do 
   kubectl label namespace $ns istio.io/rev=$revision_hyphenated --overwrite=true
 done
