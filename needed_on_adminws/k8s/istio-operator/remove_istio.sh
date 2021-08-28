@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# removes revision of istio control plan
+# and optionally the iop and entire istio namespaces
+#
 
 if [ $# -lt 1 ]; then
   echo "Usage: <istioVersion>"
@@ -35,7 +39,7 @@ if [ $answer == "y" ]; then
   if [ $? -eq 0 ]; then
     echo "iop deleted normally"
   else
-    echo "iop not deleted normally afte waiting 90 seconds, going to empty metadata.finalizers list"
+    echo "iop not deleted normally after waiting 90 seconds, going to empty metadata.finalizers list"
     kubectl get istiooperator.install.istio.io/istio-control-plane -n istio-system -o json | jq '.metadata.finalizers = []' | kubectl replace -f -
   fi
 

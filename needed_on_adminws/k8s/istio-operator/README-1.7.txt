@@ -30,15 +30,11 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
 
-istio-$istiover/bin/istioctl operator init --revision 1-7-5
-
-$ kubectl get deployments -n istio-operator
-NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
-istio-operator-1-7-5   1/1     1            1           91s
-
-$ kubectl get mutatingwebhookconfiguration
-NAME                           CREATED AT
-istio-sidecar-injector-1-7-5   2021-08-27T00:18:35Z
+$ istio-$istiover/bin/istioctl operator init --revision 1-7-5
+Using operator Deployment image: docker.io/istio/operator:1.7.5
+2021-08-28T22:13:45.885707Z	info	proto: tag has too few fields: "-"
+✔ Istio operator installed                                                                                              
+✔ Installation complete
 
 # create istio-system which does not exist yet
 kubectl get all -n istio-operator
@@ -47,7 +43,7 @@ kubectl create ns istio-system
 kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
 # until you see "Addons installed"
-istio-operator/show-istio-operator-logs.sh
+istio-operator/show-istio-operator-logs.sh 1-7-5
 
 # then wait for all components to be 'Running'
 watch -n2 kubectl get pods -n istio-system
@@ -79,29 +75,14 @@ $ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels
 Image:       docker.io/istio/proxyv2:1.7.5
 
 
-# rolling deployment restart
+# rolling deployment restart, then wait for it to finish
 kubectl rollout restart -n default deployment/my-istio-deployment
+kubectl rollout status  -n default deployment my-istio-deployment
+
 # to do entire namespace!
 # kubectl rollout restart deployment -n default
 
-# envoy proxy now at new version
-$ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
-    Image:         docker.io/istio/proxyv2:1.7.5
-    Image:          gcr.io/google-samples/hello-app:1.0
-    Image:         docker.io/istio/proxyv2:1.7.5
-    Image:         docker.io/istio/proxyv2:1.7.5
-    Image:          gcr.io/google-samples/hello-app:1.0
-    Image:         docker.io/istio/proxyv2:1.7.5
-
-$ kubectl get deployments -n istio-system
-istio-ingressgateway   1/1     1            1           35m
-istiod-1-7-5           1/1     1            1           35m
-
-$ kubectl get services -n istio-system
-istio-ingressgateway   LoadBalancer   10.96.233.110   192.168.142.253   15021:30048/TCP,80:32600/TCP,443:32601/TCP,31400:31969/TCP,15443:32167/TCP   35m
-istiod-1-7-5           ClusterIP      10.96.233.231   <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                35m
-
-
+istio-operator/show-istio-versions.sh
 
 
 
@@ -111,7 +92,8 @@ cd ~/k8s
 export istiover=1.7.6
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 istio-$istiover/bin/istioctl x precheck
-istio-$istiover/bin/istioctl operator init --revision 1-7-6
+# operator will come from docker.io unless you override
+istio-$istiover/bin/istioctl operator init --revision 1-7-6 --hub gcr.io/istio-release
 
 # this changes revision in iop
 kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
