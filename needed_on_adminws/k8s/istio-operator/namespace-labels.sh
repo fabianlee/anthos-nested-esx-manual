@@ -13,10 +13,12 @@ echo $revision_hyphenated
 for ns in default istio-system istio-operator; do
   kubectl label namespace $ns istio-injection-
 done
-kubectl get namespace -L istio-injection
  
 # set newer 'istio.io.rev' label
 for ns in default ; do 
   kubectl label namespace $ns istio.io/rev=$revision_hyphenated --overwrite=true
 done
+
+set -ex
+kubectl get namespace -L istio-injection
 kubectl get namespace -L istio.io/rev

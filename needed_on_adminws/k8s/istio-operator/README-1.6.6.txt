@@ -20,15 +20,15 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
 # NOTE 1.6.6 did NOT have a concept of '--revision 1-6-6', that came with 1.7
-istio-$istiover/bin/istioctl operator init
+istio-$istiover/bin/istioctl operator init --hub gcr.io/istio-release
 
 kubectl get all -n istio-operator
 kubectl create ns istio-system
 
 kubectl apply -f istio-operator/istio-operator-1.6.6.yaml
 
-# until you see "Addons installed"
-istio-operator/show-istio-operator-logs.sh
+# until you see "Ingress gateways installed|Addons installed"
+istio-operator/show-istio-operator-logs.sh default
 
 # then wait for all components to be 'Running'
 watch -n2 kubectl get pods -n istio-system
@@ -38,6 +38,8 @@ kubectl get services -n istio-system
 
 # apply namespace labels for 1.6.6 (using older 'istio-injection')
 istio-operator/namespace-labels-for-1.6.6.sh 
+
+istio-operator/show-istio-versions.sh
 
 # create tls key/cert, k8s TLS secret, istio gateway using secret
 cd ~/k8s/istio
@@ -73,10 +75,27 @@ prometheus             1/1     1            1           25h
 
 
 
+#### BUT this leaves old default mutatingwebhook and istiod!
+
+# trying upgrade instead to get rid of default components
+# NO that didn't work still have default control plane components
+istio-$istiover/bin/istioctl upgrade -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml 
+
+# trying applying directly
+# NO that did not work either, now multiple control plan components and
+# even an extra iop
+kubectl apply -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml 
+$ kubectl get -n istio-system iop
+NAME                    REVISION   AGE
+installed-state-1-6-6   1-6-6      2m38s
+istio-control-plane     1-6-6      6m11s
+
+
+
 #
 # before upgrading to 1.7.5
 #
-# canary is not suported wit non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
+# canary is not suported with non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
 
 # make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
 kubectl apply -f istio-operator-1.6.6-beforeupgrade-1.7.5.yaml

@@ -16,7 +16,7 @@ kubectl get pdb -n gke-system
 
 # delete pdb
 kubectl delete pdb/istio-ingress -n gke-system
-kubectl delete pdb/istio-pilor -n gke-system
+kubectl delete pdb/istio-pilot -n gke-system
 
 sleep 10
 

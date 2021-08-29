@@ -92,14 +92,25 @@ cd ~/k8s
 export istiover=1.7.6
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 istio-$istiover/bin/istioctl x precheck
+
 # operator will come from docker.io unless you override
 istio-$istiover/bin/istioctl operator init --revision 1-7-6 --hub gcr.io/istio-release
+Using operator Deployment image: gcr.io/istio-release/operator:1.7.6
+2021-08-28T22:43:30.572127Z	info	proto: tag has too few fields: "-"
+✔ Istio operator installed                                                                                              
+✔ Installation complete
+
+istio-operator/show-istio-operator-logs.sh 1-7-6
 
 # this changes revision in iop
 kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
+namespace/istio-system unchanged
+istiooperator.install.istio.io/istio-control-plane configured
 
 # wait till 'Pruning removed resources'
-istio-operator/show-istio-operator-logs.sh
+istio-operator/show-istio-operator-logs.sh 1-7-6
+
+istio-operator/show-istio-versions.sh
 
 # then wait for all components to be 'Running'
 watch -n2 kubectl get pods -n istio-system
@@ -123,11 +134,11 @@ istiod-1-7-6           ClusterIP      10.96.233.63    <none>            15010/TC
 # apply namespace label istio.io/rev
 istio-operator/namespace-labels-for-1.x.sh 1-7-6
 
-# rolling deployment restart
+# rolling deployment restart and wait for ready
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-# envoy proxy now at new version, wait till app proxy are at 1.7.6
+# envoy proxy now at new version, envoy proxy are at 1.7.6
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 #
