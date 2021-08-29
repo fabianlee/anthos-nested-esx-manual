@@ -55,6 +55,11 @@ kubectl apply -f my-istio-virtualservice.yaml
 # 'istio-ingressgateway' referencing 'tls-credential' secret
 kubectl apply -f my-istio-ingress-gateway.yaml
 
+# rolling deployment restart and wait for ready
+kubectl rollout restart -n default deployment/my-istio-deployment
+kubectl rollout status deployment my-istio-deployment
+
+
 # validate from either admin ws or host
 $ curl -k https://anthos.home.lab/istio
 Hello, world!
@@ -70,8 +75,6 @@ NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
 grafana                1/1     1            1           25h
 istio-ingressgateway   1/1     1            1           25h
 istiod                 1/1     1            1           59s
-kiali                  1/1     1            1           25h
-prometheus             1/1     1            1           25h
 
 
 
@@ -98,7 +101,19 @@ istio-control-plane     1-6-6      6m11s
 # canary is not suported with non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
 
 # make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
-kubectl apply -f istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
+cd ~/k8s
+kubectl apply -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
+istio-operator/show-istio-versions.sh
+
+# check for interruptions in different console
+./test-istio-endpoint.sh
+
+# delete default (no-revision) control plane objects leaving only the revision ones
+istio-operator/delete-no-revision-controlplane.sh
+
+
+
+
 
 # make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
 ./namespace-labels-for-1.x.sh 1-7-5
