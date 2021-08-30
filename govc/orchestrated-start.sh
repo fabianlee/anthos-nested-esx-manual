@@ -11,3 +11,6 @@ sleep 60
 
 echo wait for vcenter to be ready so user cluster can be started
 ./start-usercluster.sh
+
+echo wait for healthy status on admin and user cluster
+./is_admin_and_user_cluster_ready.sh

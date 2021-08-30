@@ -16,6 +16,7 @@ NC='\033[0m'
 
 ############# MAIN ######################
 
+first=1
 while [ 1==1 ]; do
 
   # make curl call, capture return exit code and stdout
@@ -23,9 +24,15 @@ while [ 1==1 ]; do
   outstr=$(curl $options $page)
   retVal=$?
   if [ "$outstr" -eq 200 ]; then
-    echo -e "${GREEN}$datestr OK${NC} pulling from $page, retVal=$retVal, http_code=$outstr"
+    if [ $first -eq 1 ]; then
+      echo -e "${GREEN}$datestr OK${NC} pulling from $page, retVal=$retVal, http_code=$outstr"
+      first=0
+    else
+      echo -en "${GREEN}.${NC}"
+    fi
   else
     echo -e "${RED}$datestr ERROR${NC} pulling from $page, retVal=$retVal, http_code=$outstr"
+    first=1
   fi
 
   sleep $sleepsec
