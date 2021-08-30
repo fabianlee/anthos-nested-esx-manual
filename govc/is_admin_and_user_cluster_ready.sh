@@ -47,10 +47,10 @@ for node in 192.168.141.222 192.168.141.223 192.168.141.224 192.168.141.225; do
 
     retVal=$?
     if [ $retVal -eq 0 ]; then
-      echo "OK user node $node ready"
+      echo "OK admin node $node ready"
       node_ready=1
     else
-      echo "user node $node not ready"
+      echo "admin node $node not ready"
       sleep 30
     fi
 
