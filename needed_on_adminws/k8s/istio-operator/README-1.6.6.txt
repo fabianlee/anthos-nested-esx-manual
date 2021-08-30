@@ -40,9 +40,10 @@ watch -n2 kubectl get pods -n istio-system
 # 'istio-ingressgateway' will be on EXTERNAL-IP
 kubectl get services -n istio-system
 
-# apply namespace labels for 1.6.6 (using older 'istio-injection')
-istio-operator/namespace-labels-for-1.6.6.sh 
+# apply legacy namespace labels for 1.6.6 (older 'istio-injection')
+istio-operator/namespace-labels-legacy.sh
 
+# notice because of no revision there are no versions on: operator, iop, istiod, mutatingwebhook
 istio-operator/show-istio-versions.sh
 
 # create tls key/cert, k8s TLS secret, istio gateway using secret
@@ -69,6 +70,9 @@ Hello, world!
 Version: 1.0.0
 Hostname: my-istio-deployment-d6cbc8689-cmtxx
 
+# check for interruptions in different console
+./test-istio-endpoint.sh
+
 
 
 #
@@ -76,25 +80,29 @@ Hostname: my-istio-deployment-d6cbc8689-cmtxx
 # canary is not suported with non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
 #
 
-# make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
-cd ~/k8s
-kubectl apply -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
-istio-operator/show-istio-versions.sh
-
-# check for interruptions in different console
-./test-istio-endpoint.sh
-
 # change to newer style namespace labels
-./namespace-labels.sh 1-6-6
+cd ~/k8s
+istio-operator/namespace-labels.sh 1-6-6
+
+# make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
+kubectl apply -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
+
+istio-operator/show-istio-operator-logs.sh default
+
+# notice new revisions on: istiod, iop, mutatingwebhook
+istio-operator/show-istio-versions.sh
 
 # delete default (no-revision) control plane objects leaving only the revision ones
 istio-operator/delete-no-revision-controlplane.sh
 
-# rolling deployment restart
+# notice the only vestige of non-revisioned objects is the operator 'istio-operator'
+istio-operator/show-istio-versions.sh
+
+# rolling deployment restart, but not really needed since the proxyv2:1.6.6 was already applied
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-istio-operator/show-istio-versions.sh
+
 
 
 
@@ -111,6 +119,10 @@ export istiover=1.7.5
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
+
+# make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
+istio-operator/namespace-labels.sh 1-7-5
+
 
 # canary upgrade of control plane: new operator-<rev>, istiod-<rev>, istio-sidecar-injector-<rev>
 # the istio-system iop/istio-control-plane revision does NOT change
@@ -132,10 +144,6 @@ watch -n2 kubectl get pods -n istio-system
 
 
 istio-operator/show-istio-versions.sh
-
-
-# make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
-istio-operator/namespace-labels.sh 1-7-5
 
 
 

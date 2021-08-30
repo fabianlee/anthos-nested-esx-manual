@@ -47,12 +47,12 @@ echo remove control plane for istio $istiover revision $revision_hyphenated
 if [ -n "$revision_hyphenated" ]; then
   if [[ "$istiover" < "1.7" ]]; then
     echo "istio versions less than 1.7 do not have --revision flag, so just doing 'istioctl x uninstall'"
-    ../istio-$istiover/bin/istioctl operator remove
+    ~/k8s/istio-$istiover/bin/istioctl operator remove
   else
-    ../istio-$istiover/bin/istioctl x uninstall --revision $revision_hyphenated
+    ~/k8s/istio-$istiover/bin/istioctl x uninstall --revision $revision_hyphenated
   fi
 else
-  ../istio-$istiover/bin/istioctl x uninstall
+  ~/k8s/istio-$istiover/bin/istioctl x uninstall
 fi
 
 
