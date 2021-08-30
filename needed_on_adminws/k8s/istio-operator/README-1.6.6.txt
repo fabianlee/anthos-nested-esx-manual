@@ -13,7 +13,11 @@ cd ~/k8s/istio-ootb
 ./delete-istio-ootb-components.sh
 
 
-# install istio 1.6.6 operator
+
+
+#
+# install istio 1.6.6 operator, fresh but without a revision
+#
 cd ~/k8s
 export istiover=1.6.6
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
@@ -59,46 +63,18 @@ kubectl apply -f my-istio-ingress-gateway.yaml
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-
 # validate from either admin ws or host
 $ curl -k https://anthos.home.lab/istio
 Hello, world!
 Version: 1.0.0
 Hostname: my-istio-deployment-d6cbc8689-cmtxx
 
-# notice no revision yet
-$ kubectl get -n istio-system iop
-NAME                  REVISION   AGE
-istio-control-plane              25h
-$ kubectl get deployments -n istio-system
-NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
-grafana                1/1     1            1           25h
-istio-ingressgateway   1/1     1            1           25h
-istiod                 1/1     1            1           59s
-
-
-
-#### BUT this leaves old default mutatingwebhook and istiod!
-
-# trying upgrade instead to get rid of default components
-# NO that didn't work still have default control plane components
-istio-$istiover/bin/istioctl upgrade -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml 
-
-# trying applying directly
-# NO that did not work either, now multiple control plan components and
-# even an extra iop
-kubectl apply -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml 
-$ kubectl get -n istio-system iop
-NAME                    REVISION   AGE
-installed-state-1-6-6   1-6-6      2m38s
-istio-control-plane     1-6-6      6m11s
-
 
 
 #
-# before upgrading to 1.7.5
-#
+# before upgrading to 1.7.5, take 1-6-6 to revisioned control plane
 # canary is not suported with non-revisioned operators until 1.8, https://github.com/istio/istio/issues/28964
+#
 
 # make pilot addon explicit and make control plane revision '1-6-6' for istiod and istiosidecareinjector
 cd ~/k8s
@@ -108,61 +84,19 @@ istio-operator/show-istio-versions.sh
 # check for interruptions in different console
 ./test-istio-endpoint.sh
 
+# change to newer style namespace labels
+./namespace-labels.sh 1-6-6
+
 # delete default (no-revision) control plane objects leaving only the revision ones
 istio-operator/delete-no-revision-controlplane.sh
 
+# rolling deployment restart
+kubectl rollout restart -n default deployment/my-istio-deployment
+kubectl rollout status deployment my-istio-deployment
+
+istio-operator/show-istio-versions.sh
 
 
-
-
-# make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
-./namespace-labels-for-1.x.sh 1-7-5
-
-# but notice that IstioOperators is still at 1-6-6
-# read: https://istio.io/latest/docs/setup/install/operator/#canary-upgrade
-#
-kubectl get -n istio-system iop
-NAME                  REVISION   AGE
-istio-control-plane   1-6-6      87m
-
-# labels and image still reflect 1.6.6
-$ kubectl describe -n istio-system deployment/istio-ingressgateway | grep 'Labels:' -C10
- Labels:           app=istio-ingressgateway
-                    chart=gateways
-                    heritage=Tiller
-                    istio=ingressgateway
-                    release=istio
-                    service.istio.io/canonical-name=istio-ingressgateway
-                    service.istio.io/canonical-revision=1-6-6
-Image:       docker.io/istio/proxyv2:1.6.6
-
-# labels and image still reflect 1.6.6
-$ kubectl describe -n istio-operator deployment/istio-operator  | grep 'Labels:' -C10
-
-Labels:                 install.operator.istio.io/owning-resource=
-                        install.operator.istio.io/owning-resource-namespace=
-                        operator.istio.io/component=IstioOperator
-                        operator.istio.io/managed=Reconcile
-                        operator.istio.io/version=1.6.6
-
-   istio-operator:
-    Image:      docker.io/istio/operator:1.6.6
-
-
-# spec.Revision still reflect 1.6.6
-$ kubectl describe -n istio-system iop/istio-control-plane | grep Revision -C2
-Name:         istio-control-plane
-Namespace:    istio-system
-Labels:       <none>
-...
-Spec:
-...
-  Profile:                default
-  Revision:               1-6-6
-
-$ kubectl get mutatingwebhookconfiguration
-NAME                           CREATED AT
-istio-sidecar-injector-1-6-6   2021-08-27T00:18:35Z
 
 
 
@@ -171,7 +105,6 @@ istio-sidecar-injector-1-6-6   2021-08-27T00:18:35Z
 #
 # https://istio.io/v1.7/docs/setup/upgrade/
 # https://banzaicloud.com/blog/istio-canary-upgrade/
-
 
 cd ~/k8s
 export istiover=1.7.5
@@ -185,17 +118,27 @@ istio-$istiover/bin/istioctl x precheck
 # and as describe here the istio gateways are upgraded in-place with the control plane (https://istio.io/v1.7/docs/setup/upgrade/#data-plane)
 istio-$istiover/bin/istioctl operator init --revision 1-7-5
 
+# there will now be two istio-operator (istio-operator,istio-operator-1-7-5)
+istio-operator/show-istio-versions.sh
 
-# two istio operators
-$ kubectl get deployments -n istio-operator
-NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
-istio-operator         1/1     1            1           8h
-istio-operator-1-7-5   1/1     1            1           91s
+cd ~/k8s
+kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
-# still only single control plane (when does this get upgraded?)
-$ kubectl get -n istio-system iop
-NAME                  REVISION   STATUS        AGE
-istio-control-plane   1-6-6      RECONCILING   8h
+# until you see "Ingress gateways installed|Addons installed"
+istio-operator/show-istio-operator-logs.sh 1-7-5
+
+# then wait for all components to be 'Running'
+watch -n2 kubectl get pods -n istio-system
+
+
+istio-operator/show-istio-versions.sh
+
+
+# make sure namespace labels are set properly for upcoming 1.7.5 with modern 'istio.io/rev=1-7-5' tag
+istio-operator/namespace-labels.sh 1-7-5
+
+
+
 
 # but ingress gateway is now at 1.7.5 (so ingress gateway switches immediately even in canary upgrade?)
 $ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels -A10

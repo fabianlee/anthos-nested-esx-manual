@@ -27,7 +27,8 @@ done
 echo admin cluster master control plane
 for targetvm in $(govc ls /mydc1/vm/gke-admin*); do
   # skip template
-  if [[ "$targetvm" =~ *tmpl ]]; then
+  if [[ $targetvm =~ tmpl$ ]]; then
+    echo "going to skip $targetvm"
     continue
   fi
   echo going to power on $targetvm
