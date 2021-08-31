@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo wait for esx to be available
-./start-vcenter.sh
+./start-vcenter-from-esxi.sh
 
 echo wait for vcenter to be ready so admin cluster can be started
 ./start-admincluster.sh

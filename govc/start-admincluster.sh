@@ -26,6 +26,8 @@ while [ $vcenter_available -eq 0 ]; do
   fi
 done
 
+echo waiting 60 seconds for settling
+sleep 60
 
 echo admin workstation
 govc vm.power -on $(govc ls /mydc1/vm/admin-ws/gke-admin-ws-*)
