@@ -165,9 +165,12 @@ watch kubectl get -n istio-system iop
 
 # delete old non-revision istio operator deployment and service
 istio-operator/delete-no-revision-operator.sh
-# remove versioned sidecar injector and istiod
+# remove versioned sidecar injector, istiod service and deployment 
 kubectl delete mutatingwebhookconfiguration/istio-sidecar-injector-1-6-6
 kubectl delete -n istio-system service/istiod-1-6-6
+kubectl delete -n istio-system hpa/istiod-1-6-6
+kubectl delete -n istio-system pdb/istiod-1-6-6
+kubectl delete -n istio-system deployment/istiod-1-6-6
 
 # only 1-7-5 will be present
 $ istio-operator/show-istio-versions.sh
