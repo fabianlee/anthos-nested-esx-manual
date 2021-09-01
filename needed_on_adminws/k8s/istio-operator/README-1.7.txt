@@ -17,6 +17,11 @@ cd ~/k8s/istio-ootb
 cd ~/k8s/istio
 ./make-self-signed-cert.sh
 
+kubectl create ns istio-system
+
+cd ~/k8s/istio-operator
+./create-k8s-tls-secret.sh
+
 
 #
 # installing 1.7.5
@@ -38,13 +43,9 @@ Using operator Deployment image: docker.io/istio/operator:1.7.5
 
 # create istio-system which does not exist yet
 kubectl get all -n istio-operator
-kubectl create ns istio-system
 
-cd ~/k8s/istio-operator
-./create-k8s-tls-secret.sh
-cd ~/k8s
-
-kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
+# only do if this is a new deployment, not for upgrade!!!
+# kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
 # until you see "Ingress gateways installed"
 istio-operator/show-istio-operator-logs.sh 1-7-5
@@ -78,6 +79,7 @@ kubectl rollout status  -n default deployment my-istio-deployment
 # kubectl rollout restart deployment -n default
 
 istio-operator/show-istio-versions.sh
+
 
 
 
