@@ -119,7 +119,7 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
 
-$ istio-$istiover/bin/istioctl operator init --revision 1-7-5 --hub gcr.io/istio-release
+istio-$istiover/bin/istioctl operator init --revision 1-7-5 --hub gcr.io/istio-release
 Using operator Deployment image: docker.io/istio/operator:1.7.5
 2021-08-28T22:13:45.885707Z	info	proto: tag has too few fields: "-"
 ✔ Istio operator installed                                                                                              
@@ -155,32 +155,32 @@ istio-operator/show-istio-versions.sh
 #
 
 # will see both 1-6-6 and 1-7-5 control planes
-$ istio-operator/show-istio-versions.sh
-
-# this is NOT a valid 1.6.6 command, does not have 'x uninstall' in this older version
-# $ istio-1.6.6/bin/istioctl x uninstall
-# DO NOT use this because it deletes all operators!
-# $ istio-1.6.6/bin/istioctl operator remove
-kubectl delete mutatingwebhookconfiguration/istio-sidecar-injector
-
-# can I use 1.7.5 experimental uninstall to remove 1-6-6 revision?
-# 'x uninstall' without revision is not a valid syntax, need to provide revision or file
-# this does not work!
-$ istio-1.7.5/bin/istioctl x uninstall -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
-
-# this does not work, it deletes too much
-#istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
-
-TODO: try delete single operator and then mutatingwebhook
+istio-operator/show-istio-versions.sh
 
 # switch over iop to new revision
 kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-5"}}'
 
-# wait for state to go HEALTHY
+# wait for state to go HEALTHY for 1-7-5, about 90 seconds
 watch kubectl get -n istio-system iop
+
+# delete old non-revision istio operator deployment and service
+istio-operator/delete-no-revision-operator.sh
 
 # only 1-7-5 will be present
 $ istio-operator/show-istio-versions.sh
 
+
+##### DID NOT WORK!!! ################
+# this is NOT a valid 1.6.6 command, does not have 'x uninstall' in this older version
+# $ istio-1.6.6/bin/istioctl x uninstall
+
+# DO NOT use this because it deletes all operators!
+# $ istio-1.6.6/bin/istioctl operator remove
+
+# 1.7.5 experimental uninstall to remove 1-6-6 revision?
+# 'x uninstall' without revision is not a valid syntax, need to provide revision or file
+# this does not work, deletes too much!
+$ istio-1.7.5/bin/istioctl x uninstall -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
+#######################################
 
 
