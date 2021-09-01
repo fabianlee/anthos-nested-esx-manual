@@ -34,7 +34,7 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
 
-$ istio-$istiover/bin/istioctl operator init --revision 1-7-5 --hub gcr.io/istio-release
+istio-$istiover/bin/istioctl operator init --revision 1-7-5 --hub gcr.io/istio-release
 Using operator Deployment image: docker.io/istio/operator:1.7.5
 2021-08-28T22:13:45.885707Z	info	proto: tag has too few fields: "-"
 ✔ Istio operator installed                                                                                              
@@ -44,6 +44,7 @@ Using operator Deployment image: docker.io/istio/operator:1.7.5
 kubectl get all -n istio-operator
 
 # only do if this is a new deployment, not for upgrade!!!
+# it will be picked up from iop
 # kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
 # until you see "Ingress gateways installed"
@@ -119,14 +120,15 @@ istio-operator/namespace-labels.sh 1-7-6
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-# envoy proxy now at new version, envoy proxy are at 1.7.6
-$ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
+# envoy proxy now at new version, envoy proxy will move to 1.7.6
+kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 #
 # uninstall the old control plane 1-7-5
 #
 
 # will see both 1-7-5 and 1-7-6 control planes
+# sidecar, istiod, operator
 $ istio-operator/show-istio-versions.sh
 
 $ istio-1.7.5/bin/istioctl x uninstall --revision 1-7-5
@@ -156,11 +158,11 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
 # switch over iop to new revision
 kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-6"}}'
 
-# wait for state to go HEALTHY
+# wait for state to go HEALTHY with 1-7-6
 watch kubectl get -n istio-system iop
 
 # only 1-7-6 will be present
-$ istio-operator/show-istio-versions.sh
+istio-operator/show-istio-versions.sh
 
 
 
@@ -202,55 +204,46 @@ istio-operator/namespace-labels.sh 1-7-8
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-# envoy proxy now at new version, envoy proxy are at 1.7.8
-$ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
+# envoy proxy now at new version, envoy proxy will go to 1.7.8
+kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 #
 # uninstall the old control plane 1-7-6
 #
 
 # will see both 1-7-6 and 1-7-8 control planes
-$ istio-operator/show-istio-versions.sh
+istio-operator/show-istio-versions.sh
 
-$ istio-1.7.6/bin/istioctl x uninstall --revision 1-7-6
-  Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-5.
-  Removed PodDisruptionBudget:istio-system:istiod-1-7-5.
-  Removed Deployment:istio-operator:istio-operator-1-7-5.
-  Removed Deployment:istio-system:istiod-1-7-5.
-  Removed Service:istio-operator:istio-operator-1-7-5.
-  Removed Service:istio-system:istiod-1-7-5.
-  Removed ConfigMap:istio-system:istio-1-7-5.
-  Removed ConfigMap:istio-system:istio-sidecar-injector-1-7-5.
-  Removed ServiceAccount:istio-operator:istio-operator-1-7-5.
-  Removed EnvoyFilter:istio-system:metadata-exchange-1.6-1-7-5.
-  Removed EnvoyFilter:istio-system:metadata-exchange-1.7-1-7-5.
-  Removed EnvoyFilter:istio-system:stats-filter-1.6-1-7-5.
-  Removed EnvoyFilter:istio-system:stats-filter-1.7-1-7-5.
-  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.6-1-7-5.
-  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.7-1-7-5.
-  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.6-1-7-5.
-  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.7-1-7-5.
-  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
-object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being deleted because it no longer exists
-  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
-✔ Uninstall complete                                          
+istio-1.7.6/bin/istioctl x uninstall --revision 1-7-6
+  Removed HorizontalPodAutoscaler:istio-system:istiod-1-7-6.
+  Removed PodDisruptionBudget:istio-system:istiod-1-7-6.
+  Removed Deployment:istio-operator:istio-operator-1-7-6.
+  Removed Deployment:istio-system:istiod-1-7-6.
+  Removed Service:istio-operator:istio-operator-1-7-6.
+  Removed Service:istio-system:istiod-1-7-6.
+  Removed ConfigMap:istio-system:istio-1-7-6.
+  Removed ConfigMap:istio-system:istio-sidecar-injector-1-7-6.
+  Removed ServiceAccount:istio-operator:istio-operator-1-7-6.
+  Removed EnvoyFilter:istio-system:metadata-exchange-1.6-1-7-6.
+  Removed EnvoyFilter:istio-system:metadata-exchange-1.7-1-7-6.
+  Removed EnvoyFilter:istio-system:stats-filter-1.6-1-7-6.
+  Removed EnvoyFilter:istio-system:stats-filter-1.7-1-7-6.
+  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.6-1-7-6.
+  Removed EnvoyFilter:istio-system:tcp-metadata-exchange-1.7-1-7-6.
+  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.6-1-7-6.
+  Removed EnvoyFilter:istio-system:tcp-stats-filter-1.7-1-7-6.
+  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-6.
+object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-6 is not being deleted because it no longer exists
+  Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-6.
+✔ Uninstall complete                      
 
 
 # switch over iop to new revision
 kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-8"}}'
 
-# wait for state to go from RECONCILING to HEALTHY is about 30 seconds
+# wait for state to go from RECONCILING to HEALTHY for 1-7-8, can take 90 seconds
 watch kubectl get -n istio-system iop
 
 # only 1-7-8 will be present
-$ istio-operator/show-istio-versions.sh
-
-
-
-
-
-
-
-
-
+istio-operator/show-istio-versions.sh
 

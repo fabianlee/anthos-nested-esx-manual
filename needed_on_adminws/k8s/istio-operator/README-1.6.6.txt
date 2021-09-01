@@ -165,12 +165,15 @@ watch kubectl get -n istio-system iop
 
 # delete old non-revision istio operator deployment and service
 istio-operator/delete-no-revision-operator.sh
+# remove versioned sidecar injector and istiod
+kubectl delete mutatingwebhookconfiguration/istio-sidecar-injector-1-6-6
+kubectl delete -n istio-system service/istiod-1-6-6
 
 # only 1-7-5 will be present
 $ istio-operator/show-istio-versions.sh
 
 
-##### DID NOT WORK!!! ################
+##### THINGS THAT DID NOT WORK!!! ################
 # this is NOT a valid 1.6.6 command, does not have 'x uninstall' in this older version
 # $ istio-1.6.6/bin/istioctl x uninstall
 
@@ -181,6 +184,6 @@ $ istio-operator/show-istio-versions.sh
 # 'x uninstall' without revision is not a valid syntax, need to provide revision or file
 # this does not work, deletes too much!
 $ istio-1.7.5/bin/istioctl x uninstall -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
-#######################################
+##################################################
 
 
