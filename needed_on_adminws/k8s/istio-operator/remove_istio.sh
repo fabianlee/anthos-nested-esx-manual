@@ -77,7 +77,13 @@ read -p "Delete the istio-system and istio-operator namespaces completely (y/N)?
 if [ $answer == "y" ]; then
 
   for ns in istio-system istio-operator; do 
-    echo deleting namespace
+    kubectl get ns $ns
+    # skip if not namespace not found
+    if [ $? -eq 1 ]; then
+      continue
+    fi
+
+    echo deleting namespace $ns
     timeout 60s kubectl delete ns $ns
     if [ $? -ne 0 ]; then
       echo "ns $ns could not be deleted normally, emptying its finalizers"

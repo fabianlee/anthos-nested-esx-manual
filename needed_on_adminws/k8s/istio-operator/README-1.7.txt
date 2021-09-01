@@ -18,7 +18,6 @@ cd ~/k8s/istio
 ./make-self-signed-cert.sh
 
 kubectl create ns istio-system
-
 cd ~/k8s/istio-operator
 ./create-k8s-tls-secret.sh
 

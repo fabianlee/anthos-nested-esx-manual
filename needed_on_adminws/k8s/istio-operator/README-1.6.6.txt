@@ -16,7 +16,11 @@ cd ~/k8s/istio-ootb
 cd ~/k8s/istio
 ./make-self-signed-cert.sh
 
+
 kubectl create ns istio-system
+cd ~/k8s/istio-operator
+./create-k8s-tls-secret.sh
+cd ~/k8s
 
 
 
@@ -50,16 +54,12 @@ istio-operator/namespace-labels-legacy.sh
 # notice because of no revision there are no versions on: operator, iop, istiod, mutatingwebhook
 istio-operator/show-istio-versions.sh
 
-cd ~/k8s/istio-operator
-./create-k8s-tls-secret.sh
-cd ~/k8s
-
 # 'my-istio-deployment' and 'my-istio-service'
-kubectl apply -f istio-operatormy-istio-deployment-and-service.yaml
+kubectl apply -f istio-operator/my-istio-deployment-and-service.yaml
 # 'my-istio-virtualservice'
-kubectl apply -f istio-operatormy-istio-virtualservice.yaml
+kubectl apply -f istio-operator/my-istio-virtualservice.yaml
 # 'istio-ingressgateway' referencing 'tls-credential' secret
-kubectl apply -f istio-operatormy-istio-ingress-gateway.yaml
+kubectl apply -f istio-operator/my-istio-ingress-gateway.yaml
 
 # rolling deployment restart and wait for ready
 kubectl rollout restart -n default deployment/my-istio-deployment
@@ -95,9 +95,11 @@ istio-operator/show-istio-operator-logs.sh default
 istio-operator/show-istio-versions.sh
 
 # delete default (no-revision) control plane objects leaving only the revision ones
+# leave operator 'istio-operator'
 istio-operator/delete-no-revision-controlplane.sh
 
 # notice the only vestige of non-revisioned objects is the operator 'istio-operator'
+# will get removed after 1.7.5 installed
 istio-operator/show-istio-versions.sh
 
 # rolling deployment restart, but not really needed since the proxyv2:1.6.6 was already applied
@@ -106,7 +108,7 @@ kubectl rollout status deployment my-istio-deployment
 
 
 #
-# installing 1.7.5
+# installing revisioned 1.7.5
 #
 # https://istio.io/v1.7/docs/setup/upgrade/
 # https://banzaicloud.com/blog/istio-canary-upgrade/
@@ -123,11 +125,8 @@ Using operator Deployment image: docker.io/istio/operator:1.7.5
 ✔ Istio operator installed                                                                                              
 ✔ Installation complete
 
-# create istio-system which does not exist yet
+# now have 2 operators, one revisioned at 1-7-5
 kubectl get all -n istio-operator
-
-# only do if this is a new deployment, not for upgrade!!!
-# kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
 # until you see "Ingress gateways installed"
 istio-operator/show-istio-operator-logs.sh 1-7-5
@@ -135,30 +134,18 @@ istio-operator/show-istio-operator-logs.sh 1-7-5
 # then wait for all components to be 'Running'
 watch -n2 kubectl get pods -n istio-system
 NAME                                    READY   STATUS    RESTARTS   AGE
-istio-ingressgateway-6bdd7687b6-86cls   1/1     Running   0          2m22s
-istiod-1-7-5-649b69468-ptjrj            1/1     Running   0          2m34s
+istio-ingressgateway-6b48bb4d46-n98cr   1/1     Running   0          41s
+istiod-1-6-6-56c494d958-qp9j6           1/1     Running   0          3m47s
+istiod-1-7-5-645d5c6d46-jrzmw           1/1     Running   0          50s
 
-# 'istio-ingressgateway' will be on EXTERNAL-IP
-kubectl get services -n istio-system
-
-# apply namespace label istio.io/rev
+# apply namespace label istio.io/rev to default ns
 istio-operator/namespace-labels.sh 1-7-5
 
 istio-operator/show-istio-versions.sh
 
-# 'my-istio-deployment' and 'my-istio-service'
-kubectl apply -f istio-operator/my-istio-deployment-and-service.yaml
-# 'my-istio-virtualservice'
-kubectl apply -f istio-operator/my-istio-virtualservice.yaml
-# 'istio-ingressgateway' referencing 'tls-credential' secret
-kubectl apply -f istio-operator/my-istio-ingress-gateway.yaml
-
 # rolling deployment restart, then wait for it to finish
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status  -n default deployment my-istio-deployment
-
-# to do entire namespace!
-# kubectl rollout restart deployment -n default
 
 istio-operator/show-istio-versions.sh
 
@@ -170,16 +157,21 @@ istio-operator/show-istio-versions.sh
 # will see both 1-6-6 and 1-7-5 control planes
 $ istio-operator/show-istio-versions.sh
 
-# this is NOT a 1.6.6 command
+# this is NOT a valid 1.6.6 command, does not have 'x uninstall' in this older version
 # $ istio-1.6.6/bin/istioctl x uninstall
 # DO NOT use this because it deletes all operators!
-$ istio-1.6.6/bin/istioctl operator remove
+# $ istio-1.6.6/bin/istioctl operator remove
 kubectl delete mutatingwebhookconfiguration/istio-sidecar-injector
 
 # can I use 1.7.5 experimental uninstall to remove 1-6-6 revision?
-# $ istio-1.6.6/bin/istioctl x uninstall
+# 'x uninstall' without revision is not a valid syntax, need to provide revision or file
+# this does not work!
+$ istio-1.7.5/bin/istioctl x uninstall -f istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
 
-TODO: should I just delete single operator, and not rely on istioctl?
+# this does not work, it deletes too much
+#istio-operator/istio-operator-1.6.6-beforeupgrade-1.7.5.yaml
+
+TODO: try delete single operator and then mutatingwebhook
 
 # switch over iop to new revision
 kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-5"}}'
