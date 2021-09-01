@@ -55,7 +55,6 @@ else
   ~/k8s/istio-$istiover/bin/istioctl x uninstall
 fi
 
-
 kubectl get -n istio-system iop
 read -p "Delete the iop (y/N)?" answer
 if [ $answer == "y" ]; then
@@ -82,7 +81,7 @@ if [ $answer == "y" ]; then
     timeout 60s kubectl delete ns $ns
     if [ $? -ne 0 ]; then
       echo "ns $ns could not be deleted normally, emptying its finalizers"
-      kubectl patch ns $ns -p '{"metadata":{"finalizers":null}}'
+      kubectl patch ns $ns --type merge -p '{"metadata":{"finalizers":null}}'
 
       echo "waiting 20sec to see if patching with empty finalizers worked"
       sleep 20

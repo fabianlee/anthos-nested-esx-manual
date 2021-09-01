@@ -1,4 +1,4 @@
-f#
+#
 # To remove the OOTB istio that comes with Anthos 1.4 and replace with a full 1.7.5 istio operator
 # and then canary upgrade up
 #
@@ -30,7 +30,7 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 
 istio-$istiover/bin/istioctl x precheck
 
-$ istio-$istiover/bin/istioctl operator init --revision 1-7-5
+$ istio-$istiover/bin/istioctl operator init --revision 1-7-5 --hub gcr.io/istio-release
 Using operator Deployment image: docker.io/istio/operator:1.7.5
 2021-08-28T22:13:45.885707Z	info	proto: tag has too few fields: "-"
 ✔ Istio operator installed                                                                                              
@@ -40,9 +40,13 @@ Using operator Deployment image: docker.io/istio/operator:1.7.5
 kubectl get all -n istio-operator
 kubectl create ns istio-system
 
+cd ~/k8s/istio-operator
+./create-k8s-tls-secret.sh
+cd ~/k8s
+
 kubectl apply -f istio-operator/istio-operator-1.7.5.yaml
 
-# until you see "Addons installed"
+# until you see "Ingress gateways installed"
 istio-operator/show-istio-operator-logs.sh 1-7-5
 
 # then wait for all components to be 'Running'
@@ -55,25 +59,16 @@ istiod-1-7-5-649b69468-ptjrj            1/1     Running   0          2m34s
 kubectl get services -n istio-system
 
 # apply namespace label istio.io/rev
-istio-operator/namespace-labels-for-1.x.sh 1-7-5
+istio-operator/namespace-labels.sh 1-7-5
 
-# control plane (either command works)
-$ kubectl get -n istio-system iop
-$ kubectl get istiooperators.install.istio.io -n istio-system istio-control-plane
-NAME                  REVISION   STATUS        AGE
-istio-control-plane   1-7-5      RECONCILING   8h
+istio-operator/show-istio-versions.sh
 
-
-$ kubectl describe -n istio-system deployment/istio-ingressgateway | grep Labels -A10
-  Labels:           app=istio-ingressgateway
-                    chart=gateways
-                    heritage=Tiller
-                    istio=ingressgateway
-                    release=istio
-                    service.istio.io/canonical-name=istio-ingressgateway
-                    service.istio.io/canonical-revision=1-7-5
-Image:       docker.io/istio/proxyv2:1.7.5
-
+# 'my-istio-deployment' and 'my-istio-service'
+kubectl apply -f istio-operator/my-istio-deployment-and-service.yaml
+# 'my-istio-virtualservice'
+kubectl apply -f istio-operator/my-istio-virtualservice.yaml
+# 'istio-ingressgateway' referencing 'tls-credential' secret
+kubectl apply -f istio-operator/my-istio-ingress-gateway.yaml
 
 # rolling deployment restart, then wait for it to finish
 kubectl rollout restart -n default deployment/my-istio-deployment
@@ -86,8 +81,9 @@ istio-operator/show-istio-versions.sh
 
 
 
-
+#
 # now do upgrade to 1.7.6
+#
 cd ~/k8s
 export istiover=1.7.6
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
@@ -100,39 +96,23 @@ Using operator Deployment image: gcr.io/istio-release/operator:1.7.6
 ✔ Istio operator installed                                                                                              
 ✔ Installation complete
 
+# wait for 'Ingress gateways installed'
+# new 'istio-operator-1-7-6'
 istio-operator/show-istio-operator-logs.sh 1-7-6
 
-# this changes revision in iop
-kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
-namespace/istio-system unchanged
-istiooperator.install.istio.io/istio-control-plane configured
-
-# wait till 'Pruning removed resources'
-istio-operator/show-istio-operator-logs.sh 1-7-6
-
+# wait for a couple of minutes
+# istio-operator namespace will have tag 'operator.istio.io/version=1.7.6'
+# ingressgateway will have new 1.7.6 image and tag 'operator.istio.io/version=1.7.6'
+# new istio-sidecar-injector-1-7-6
+# iop will still be 1-7-5
 istio-operator/show-istio-versions.sh
 
-# then wait for all components to be 'Running'
-watch -n2 kubectl get pods -n istio-system
-NAME                                    READY   STATUS    RESTARTS   AGE
-istio-ingressgateway-6bdd7687b6-86cls   1/1     Running   0          2m22s
-istiod-1-7-5-649b69468-ptjrj            1/1     Running   0          2m34s
-istiod-1-7-6-64ff4f6869-w4tqt           1/1     Running   0          25m
-
-# control plane (either command works)
-$ kubectl get -n istio-system iop
-$ kubectl get istiooperators.install.istio.io -n istio-system istio-control-plane
-NAME                  REVISION   STATUS        AGE
-istio-control-plane   1-7-6      HEALTHY   8h
-
-# 'istio-ingressgateway' will be on EXTERNAL-IP
-$ kubectl get services -n istio-system
-istio-ingressgateway   LoadBalancer   10.96.233.110   192.168.142.253   15021:32236/TCP,80:32600/TCP,443:32601/TCP,31400:31475/TCP,15443:31837/TCP   69m
-istiod-1-7-5           ClusterIP      10.96.233.231   <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                69m
-istiod-1-7-6           ClusterIP      10.96.233.63    <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                25m
+# SKIP do not do!  this will confuse the operators and ingressgateway into getting mixed!
+# this changes revision in iop and image of ingress gateway
+# kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
 
 # apply namespace label istio.io/rev
-istio-operator/namespace-labels-for-1.x.sh 1-7-6
+istio-operator/namespace-labels.sh 1-7-6
 
 # rolling deployment restart and wait for ready
 kubectl rollout restart -n default deployment/my-istio-deployment
@@ -142,7 +122,7 @@ kubectl rollout status deployment my-istio-deployment
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 #
-# uninstall the old control plan
+# uninstall the old control plane 1-7-5
 #
 
 # will see both 1-7-5 and 1-7-6 control planes
@@ -171,10 +151,15 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
   Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
 ✔ Uninstall complete                                          
 
+
+# switch over iop to new revision
+kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-6"}}'
+
+# wait for state to go HEALTHY
+watch kubectl get -n istio-system iop
+
 # only 1-7-6 will be present
 $ istio-operator/show-istio-versions.sh
-
-
 
 
 
@@ -187,56 +172,42 @@ export istiover=1.7.8
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istiover sh -
 istio-$istiover/bin/istioctl x precheck
 
-$ istio-$istiover/bin/istioctl operator init --revision 1-7-8
-Using operator Deployment image: docker.io/istio/operator:1.7.8
-2021-08-28T13:42:02.892856Z	info	proto: tag has too few fields: "-"
+# operator will come from docker.io unless you override
+istio-$istiover/bin/istioctl operator init --revision 1-7-8 --hub gcr.io/istio-release
+Using operator Deployment image: gcr.io/istio-release/operator:1.7.8
+2021-08-28T22:43:30.572127Z	info	proto: tag has too few fields: "-"
 ✔ Istio operator installed                                                                                              
 ✔ Installation complete
 
+# wait for 'Ingress gateways installed'
+# new 'istio-operator-1-7-8'
+istio-operator/show-istio-operator-logs.sh 1-7-8
 
-$ kubectl get deployments -n istio-operator
-istio-operator-1-7-6   1/1     1            1           51m
-istio-operator-1-7-8   1/1     1            1           43s
+# wait for a couple of minutes
+# istio-operator namespace will have tag 'operator.istio.io/version=1.7.8'
+# ingressgateway will have new 1.7.6 image and tag 'operator.istio.io/version=1.7.8'
+# new istio-sidecar-injector-1-7-8
+# iop will still be 1-7-6
+istio-operator/show-istio-versions.sh
 
-
-# this changes revision in iop
-kubectl apply -f istio-operator/istio-operator-1.7.8.yaml
-
-# wait till 'Pruning removed resources'
-istio-operator/show-istio-operator-logs.sh
-
-# then wait for all components to be 'Running'
-watch -n2 kubectl get pods -n istio-system
-NAME                                    READY   STATUS    RESTARTS   AGE
-istio-ingressgateway-6bdd7687b6-86cls   1/1     Running   0          2m22s
-istiod-1-7-6-649b69468-ptjrj            1/1     Running   0          2m34s
-istiod-1-7-8-64ff4f6869-w4tqt           1/1     Running   0          25m
-
-# control plane (either command works)
-$ kubectl get -n istio-system iop
-$ kubectl get istiooperators.install.istio.io -n istio-system istio-control-plane
-NAME                  REVISION   STATUS        AGE
-istio-control-plane   1-7-8      HEALTHY   8h
-
-# 'istio-ingressgateway' will be on EXTERNAL-IP
-$ kubectl get services -n istio-system
-istio-ingressgateway   LoadBalancer   10.96.233.110   192.168.142.253   15021:32236/TCP,80:32600/TCP,443:32601/TCP,31400:31475/TCP,15443:31837/TCP   69m
-istiod-1-7-6           ClusterIP      10.96.233.231   <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                69m
-istiod-1-7-8           ClusterIP      10.96.233.63    <none>            15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                25m
+# SKIP do not do!  this will confuse the operators and ingressgateway into getting mixed!
+# this changes revision in iop and image of ingress gateway
+# kubectl apply -f istio-operator/istio-operator-1.7.6.yaml
 
 # apply namespace label istio.io/rev
-istio-operator/namespace-labels-for-1.x.sh 1-7-8
+istio-operator/namespace-labels.sh 1-7-8
 
-# rolling deployment restart
+# rolling deployment restart and wait for ready
 kubectl rollout restart -n default deployment/my-istio-deployment
 kubectl rollout status deployment my-istio-deployment
 
-# envoy proxy now at new version, wait till app proxy are at 1.7.8
+# envoy proxy now at new version, envoy proxy are at 1.7.8
 $ kubectl describe pod -lapp=my-istio-deployment | grep 'Image:'
 
 #
-# uninstall the old control plan
+# uninstall the old control plane 1-7-6
 #
+
 # will see both 1-7-6 and 1-7-8 control planes
 $ istio-operator/show-istio-versions.sh
 
@@ -263,8 +234,17 @@ object: MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5 is not being 
   Removed MutatingWebhookConfiguration::istio-sidecar-injector-1-7-5.
 ✔ Uninstall complete                                          
 
+
+# switch over iop to new revision
+kubectl patch -n istio-system --type merge iop/istio-control-plane -p '{"spec":{"revision":"1-7-8"}}'
+
+# wait for state to go from RECONCILING to HEALTHY is about 30 seconds
+watch kubectl get -n istio-system iop
+
 # only 1-7-8 will be present
 $ istio-operator/show-istio-versions.sh
+
+
 
 
 
