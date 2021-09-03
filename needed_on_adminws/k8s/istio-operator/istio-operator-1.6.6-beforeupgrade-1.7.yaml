@@ -3,7 +3,7 @@ apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
   namespace: istio-system
-  name: istio-control-plane
+  name: istio-control-plane-1-6-6
 spec:
   profile: default
   # CHANGED: should have installed with revision so canary upgrades possible
