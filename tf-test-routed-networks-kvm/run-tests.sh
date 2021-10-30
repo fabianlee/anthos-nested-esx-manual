@@ -2,7 +2,7 @@
 
 # add ssh fingerprint to known_hosts so we don't have to be asked later
 for network in $(seq 140 142); do 
-  ssh-keyscan -H 192.168.$network.10 >> ~/.ssh/known_hosts
+  ssh-keyscan -H 192.168.$network.10 2>/dev/null >> ~/.ssh/known_hosts
 done
 
 # test connectivity to each other

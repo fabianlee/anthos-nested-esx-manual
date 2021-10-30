@@ -1,16 +1,15 @@
 ansible_python_interpreter: /usr/bin/python3
 
-# nic of your KVM host, used to point VMS back to common DNS
-hostvm:
-  ip: 192.168.2.239
+# nic of your KVM host, used to point VMS back to common host dnsmasq
+# not necessay to override unless 'ansible_default_ipv4.address' does not choose proper IP
+#hostvm_ip: 192.168.2.239
 
 # used to determine which templates to use (14=Anthos 1.4, 18=Anthos 1.8)
-anthos_template_version: 14
+anthos_template_version: 18
 
 # used for gcp access
 gcp:
-  project_name: anthos1
-  project_id: anthos1-323418 
+  project_id: clever-circlet-330611
   stackdriver_region: us-east1
 
 vcenter:

@@ -22,7 +22,7 @@
   command:
       cmd: apt update -y
   register: apt_result
-  fail_when: not apt_result.rc in [0,1]
+  failed_when: not apt_result.rc in [0,1]
 
 - name: remove any older docker packages, using apt to make sure apt-get is not used
   apt:

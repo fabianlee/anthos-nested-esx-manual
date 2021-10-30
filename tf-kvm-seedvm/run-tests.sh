@@ -3,7 +3,7 @@
 network=140
 
 # add ssh fingerprint to known_hosts so we don't have to be asked later
-ssh-keyscan -H 192.168.$network.220 >> ~/.ssh/known_hosts
+ssh-keyscan -H 192.168.$network.220 2>/dev/null >> ~/.ssh/known_hosts
 
 # test forward+reverse DNS resolution
 set -ex

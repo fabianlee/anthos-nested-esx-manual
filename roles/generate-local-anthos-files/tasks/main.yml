@@ -6,13 +6,17 @@
     dest: "{{item}}"
     mode: 0775
   loop:
+    # for creating admin workstation
     - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
+    # for creating admin cluster
     - "{{playbook_dir}}/needed_on_adminws/admin-cluster.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/user-seesaw-hostconfig.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/user-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/admin-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/admin-seesaw-hostconfig.yaml"
+    # for creating user cluster
+    - "{{playbook_dir}}/needed_on_adminws/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/user-seesaw-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/user-hostconfig.yaml"
 
 - name: create templates based on group_vars/all
   template:
@@ -20,6 +24,7 @@
     dest: "{{item}}"
     mode: 0775
   loop:
+    # vcenter installation config
     - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
     - "{{playbook_dir}}/govc/source-govc-vars.sh"
     - "{{playbook_dir}}/govc/start-vcenter-from-esxi.sh"
