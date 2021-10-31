@@ -43,7 +43,7 @@ network:
     # # (Required when using "static" mode) The absolute or relative path to the yaml file
     # # to use for static IP allocation. Hostconfig part will be overwritten by network.hostconfig
     # # if specified
-    ipBlockFilePath: "user-hostconfig.yaml"
+    ipBlockFilePath: "user-block.yaml"
   # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
   # with the pod CIDR range
   serviceCIDR: 10.96.233.0/24 #10.96.0.0/20
@@ -93,7 +93,7 @@ loadBalancer:
     # (Required) The absolute or relative path to the yaml file to use for IP allocation
     # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
     # by network.hostconfig if specified.
-    ipBlockFilePath: "user-seesaw-hostconfig.yaml"
+    ipBlockFilePath: "user-seesaw-block.yaml"
     # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
     # be between 1-255 and unique in a VLAN.
     vrid: 4

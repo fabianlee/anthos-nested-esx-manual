@@ -47,7 +47,7 @@ network:
     type: static
     # # (Required when using "static" mode) The absolute or relative path to the yaml file
     # # to use for static IP allocation
-    ipBlockFilePath: "admin-hostconfig.yaml"
+    ipBlockFilePath: "admin-block.yaml"
 
     # (Required) Define what IP mode to use ("dhcp" or "static")
     #type: dhcp
@@ -105,7 +105,7 @@ loadBalancer:
     # (Required) The absolute or relative path to the yaml file to use for IP allocation
     # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
     # by network.hostconfig if specified.
-    ipBlockFilePath: "admin-seesaw-hostconfig.yaml"
+    ipBlockFilePath: "admin-seesaw-block.yaml"
     # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
     # be between 1-255 and unique in a VLAN.
     vrid: 3
