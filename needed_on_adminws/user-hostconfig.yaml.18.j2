@@ -1,0 +1,17 @@
+# copy this to the admin workstation after completion
+# 'hostconfig' section was < 1.5, not valid anymore 
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.5/how-to/ip-block-file
+blocks:
+  - netmask: 255.255.255.0
+    gateway: 192.168.142.1
+    ips:
+    - ip: 192.168.142.230
+      hostname: user-host1
+    - ip: 192.168.142.231
+      hostname: user-host2
+    - ip: 192.168.142.232
+      hostname: user-host3
+    - ip: 192.168.142.233
+      hostname: user-host4
+    - ip: 192.168.142.234
+      hostname: user-host5
