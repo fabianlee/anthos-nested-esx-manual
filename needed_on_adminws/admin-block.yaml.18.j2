@@ -1,6 +1,7 @@
 # copy this to the admin workstation after completion
-# 'hostconfig' section was < 1.5, not valid anymore 
-# https://cloud.google.com/anthos/clusters/docs/on-prem/1.5/how-to/ip-block-file
+# 'hostconfig' section was <= 1.5, after that 'hostconfig' was put in main admin-cluster.yaml
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.5/how-to/ip-block-file (still had hostconfig)
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.6/how-to/admin-cluster-quickstart (no 'hostconfig')
 blocks:
   - netmask: 255.255.255.0
     gateway: 192.168.141.1

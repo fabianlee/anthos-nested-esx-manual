@@ -33,16 +33,18 @@ vCenter:
 network:
   # # (Optional) This section overrides ipBlockFile values. Use with ipType "static" mode.
   # # Used for seesaw nodes as well
-  # hostConfig:
-  #   # List of DNS servers
-  #   dnsServers:
-  #   - ""
-  #   # List of NTP servers
-  #   ntpServers:
-  #   - ""
-  #   # # List of DNS search domains
-  #   # searchDomainsForDNS:
-  #   # - ""
+  hostConfig:
+    # List of DNS servers
+    dnsServers:
+    - "{{ hostvm_ip | default(ansible_default_ipv4.address) }}"
+    - 8.8.8.8
+    - 4.4.4.4
+    # List of NTP servers
+    ntpServers:
+    - time.google.com
+    # # List of DNS search domains
+    searchDomainsForDNS:
+    - home.lab
   ipMode:
     type: static
     # # (Required when using "static" mode) The absolute or relative path to the yaml file
@@ -132,7 +134,7 @@ loadBalancer:
 # at least three hosts)
 antiAffinityGroups:
   # Set to false to disable DRS rule creation
-  enabled: true
+  enabled: false
 # # (Optional/Preview) Specify the admin master node configuration which can be added
 # # or edited only during cluster creation
 # adminMaster:
