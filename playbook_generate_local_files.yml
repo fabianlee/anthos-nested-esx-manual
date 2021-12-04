@@ -6,5 +6,5 @@
   become: no
 
   roles:
-    - generate-local-anthos-files
+    - generate-local-files
 
