@@ -30,7 +30,7 @@ network:
   hostConfig:
     # List of DNS servers
     dnsServers:
-    - "{{ hostvm_ip | default(ansible_default_ipv4.address) }}"
+    - "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
     - 8.8.8.8
     - 8.8.4.4
     # List of NTP servers

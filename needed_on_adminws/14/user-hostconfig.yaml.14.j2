@@ -1,6 +1,6 @@
 # copy this to the admin workstation after completion
 hostconfig:
-  dns: "{{ hostvm_ip | default(ansible_default_ipv4.address) }}"
+  dns: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
   tod: time.google.com
   otherdns:
   - 8.8.8.8

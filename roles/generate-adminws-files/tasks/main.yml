@@ -1,0 +1,39 @@
+---
+
+- name: create templates based on group_vars/all, tailored to anthos version 1.4
+  template:
+    src: "{{item}}.{{anthos_template_version}}.j2"
+    dest: "/home/ubuntu/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # for creating admin workstation
+    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
+    # for creating admin cluster
+    - "{{playbook_dir}}/needed_on_adminws/14/admin-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/14/admin-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/14/admin-seesaw-hostconfig.yaml"
+    # for creating user cluster
+    - "{{playbook_dir}}/needed_on_adminws/14/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/14/user-seesaw-hostconfig.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/14/user-hostconfig.yaml"
+  when: anthos_template_version==14
+
+- name: create templates based on group_vars/all, tailored to anthos version {{anthos_template_version}}
+  template:
+    src: "{{item}}.{{anthos_template_version}}.j2"
+    dest: "/home/ubuntu/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # for creating admin workstation
+    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
+    - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
+    # for creating admin cluster
+    - "{{playbook_dir}}/needed_on_adminws/18/admin-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/18/admin-block.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/18/admin-seesaw-block.yaml"
+    # for creating user cluster
+    - "{{playbook_dir}}/needed_on_adminws/18/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/18/user-seesaw-block.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/18/user-block.yaml"
+  when: anthos_template_version==18
+
