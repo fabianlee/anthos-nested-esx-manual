@@ -5,7 +5,7 @@ kind: UserCluster
 # (Required) A unique name for this cluster
 name: "user1"
 # (Required) GKE on-prem version (example: 1.3.0-gke.16)
-gkeOnPremVersion: 1.8.4-gke.1
+gkeOnPremVersion: "{{anthos_bundle_version}}"
 # # (Optional) vCenter configuration (default: inherit from the admin cluster)
 vCenter:
 #   # Resource pool to use. Specify [VSPHERE_CLUSTER_NAME]/Resources to use the default
