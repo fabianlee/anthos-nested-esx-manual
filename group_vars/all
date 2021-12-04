@@ -1,7 +1,7 @@
 ansible_python_interpreter: /usr/bin/python3
 
-# nic of your KVM host, used to point VMS back to common host dnsmasq
-# not necessary to override unless 'ansible_default_ipv4.address' does not choose proper IP
+# nic of your KVM host (the ansible orchestrator), used to point VMS back to common host dnsmasq
+# not necessary to override unless local 'ansible_default_ipv4.address' does not choose proper IP
 #hostvm_ip: 192.168.2.239
 
 # used to determine which templates to use (14=Anthos 1.4, 18=Anthos 1.8)

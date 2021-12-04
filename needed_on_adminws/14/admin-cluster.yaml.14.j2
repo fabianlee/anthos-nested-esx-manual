@@ -3,12 +3,12 @@
 apiVersion: v1
 kind: AdminCluster
 # (Required) Absolute path to a GKE bundle on disk
-bundlePath: /var/lib/gke/bundles/gke-onprem-vsphere-1.4.3-gke.3-full.tgz
+bundlePath: /var/lib/gke/bundles/gke-onprem-vsphere-{{anthos_bundle_version}}-full.tgz
 # (Required) vCenter configuration
 vCenter:
   address: vcenter.home.lab
   datacenter: mydc1
-  cluster: esxi1.home.lab
+  cluster: mycluster1 # 'esxi1.home.lab' if no cluster
   resourcePool: admin
   datastore: datastore1
   # Provide the path to vCenter CA certificate pub key for SSL verification
