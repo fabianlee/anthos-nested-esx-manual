@@ -59,10 +59,10 @@ network:
     # ipBlockFilePath: ""
   # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
   # with the pod CIDR range
-  serviceCIDR: 10.96.232.0/24
+  serviceCIDR: 10.100.0.0/17
   # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
   # the service CIDR range
-  podCIDR: 10.97.0.0/16 # 192.168.0.0/16
+  podCIDR: 10.99.0.0/16
   vCenter:
     # vSphere network name
     networkName: admin141

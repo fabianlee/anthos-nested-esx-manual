@@ -48,10 +48,10 @@ network:
     ipBlockFilePath: "user-block.yaml"
   # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
   # with the pod CIDR range
-  serviceCIDR: 10.96.233.0/24 #10.96.0.0/20
+  serviceCIDR: 10.101.0.0/17
   # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
   # the service CIDR range
-  podCIDR: 10.96.233.0/24 # 192.168.0.0/16
+  podCIDR: 10.99.0.0/16
   vCenter:
     # vSphere network name
     networkName: user142
