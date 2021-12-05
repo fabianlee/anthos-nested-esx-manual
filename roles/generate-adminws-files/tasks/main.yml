@@ -39,6 +39,6 @@
     mode: 0775
   loop:
     # for configuring CoreDNS
-    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/admin-clusterdns.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/configure-clusterdns.yaml"
   when: anthos_template_version>=19
 
