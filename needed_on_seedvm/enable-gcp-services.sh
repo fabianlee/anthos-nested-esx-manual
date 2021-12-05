@@ -20,3 +20,7 @@ logging.googleapis.com
 # during admin cluster creation so trying
 gcloud services enable \
 containerregistry.googleapis.com
+
+# new requirement starting at 1.9
+gcloud services enable \
+opsconfigmonitoring.googleapis.com
