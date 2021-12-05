@@ -6,9 +6,12 @@ ansible_python_interpreter: /usr/bin/python3
 
 # used to determine which templates to use (14=Anthos 1.4, 18=Anthos 1.8)
 # e.g. 'needed_on_adminws/<anthos_template_version>/*.j2'
-anthos_template_version: 18
-# versions listed here: https://cloud.google.com/anthos/clusters/docs/on-prem/1.8/downloads
-anthos_bundle_version: 1.8.5-gke.3
+anthos_template_version: 19 # 18
+
+# versions listed here: 
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.8/downloads
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.9/downloads
+anthos_bundle_version: 1.9.2-gke.4 # 1.8.5-gke.3
 
 # used for gcp access
 gcp:
