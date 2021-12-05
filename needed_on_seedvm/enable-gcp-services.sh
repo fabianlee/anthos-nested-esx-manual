@@ -21,6 +21,7 @@ logging.googleapis.com
 gcloud services enable \
 containerregistry.googleapis.com
 
+set -x
 # new requirement starting at 1.9
 gcloud services enable \
 opsconfigmonitoring.googleapis.com
