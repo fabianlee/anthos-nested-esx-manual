@@ -1,0 +1,28 @@
+---
+
+- name: make sure 'seedvm' directory exists
+  file:
+    path: /home/ubuntu/seedvm
+    state: directory
+
+- name: create templates based on group_vars/all, tailored to anthos version 1.4
+  template:
+    src: "{{item}}.{{anthos_template_version}}.j2"
+    dest: "/home/ubuntu/seedvm/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # for creating admin workstation
+    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
+  when: anthos_template_version==14
+
+- name: create templates based on group_vars/all, tailored to anthos version {{anthos_template_version}}
+  template:
+    src: "{{item}}.{{anthos_template_version}}.j2"
+    dest: "/home/ubuntu/seedvm/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # for creating admin workstation
+    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
+    - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
+  when: anthos_template_version>14
+

@@ -6,8 +6,6 @@
     dest: "/home/ubuntu/{{ item|basename }}"
     mode: 0775
   loop:
-    # for creating admin workstation
-    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
     # for creating admin cluster
     - "{{playbook_dir}}/needed_on_adminws/14/admin-cluster.yaml"
     - "{{playbook_dir}}/needed_on_adminws/14/admin-hostconfig.yaml"
@@ -24,16 +22,13 @@
     dest: "/home/ubuntu/{{ item|basename }}"
     mode: 0775
   loop:
-    # for creating admin workstation
-    - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
-    - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
     # for creating admin cluster
-    - "{{playbook_dir}}/needed_on_adminws/18/admin-cluster.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/18/admin-block.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/18/admin-seesaw-block.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/admin-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/admin-block.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/admin-seesaw-block.yaml"
     # for creating user cluster
-    - "{{playbook_dir}}/needed_on_adminws/18/user-cluster.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/18/user-seesaw-block.yaml"
-    - "{{playbook_dir}}/needed_on_adminws/18/user-block.yaml"
-  when: anthos_template_version==18
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-cluster.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-seesaw-block.yaml"
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-block.yaml"
+  when: anthos_template_version>14
 

@@ -1,0 +1,7 @@
+---
+
+- hosts: seedvm
+  gather_facts: yes
+  roles:
+    - generate-seedvm-files
+

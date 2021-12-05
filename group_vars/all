@@ -12,6 +12,7 @@ anthos_template_version: 19 # 18
 # https://cloud.google.com/anthos/clusters/docs/on-prem/1.8/downloads
 # https://cloud.google.com/anthos/clusters/docs/on-prem/1.9/downloads
 anthos_bundle_version: 1.9.2-gke.4 # 1.8.5-gke.3
+bundle_safe_name: "{{ anthos_bundle_version | replace('.','') }}"
 
 # used for gcp access
 gcp:

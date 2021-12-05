@@ -1,3 +1,4 @@
+# 1.9
 gcp:
   # Path of the component access service account's JSON key file
   componentAccessServiceAccountKeyPath: "anthos-allowlisted.json"
@@ -24,7 +25,7 @@ vCenter:
 # The URL of the proxy for the jump host
 proxyUrl: ""
 adminWorkstation:
-  name: gke-admin-ws-211205-001208
+  name: gke-admin-ws-{{bundle_safe_name}}
   cpus: 6
   memoryMB: 8192
   # The boot disk size of the admin workstation in GB. It is recommended to use a
@@ -32,7 +33,7 @@ adminWorkstation:
   diskGB: 100
   # Name for the persistent disk to be mounted to the home directory (ending in .vmdk).
   # Any directory in the supplied path must be created before deployment.
-  dataDiskName: gke-admin-ws-211205-001208-data-disk.vmdk
+  dataDiskName: gke-admin-ws-data-disk.vmdk
   # The size of the data disk in MB.
   dataDiskMB: 512
   network:
