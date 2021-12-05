@@ -1,6 +1,6 @@
 ---
 
-- name: create templates based on group_vars/all, tailored to anthos version 1.4
+- name: create AdminWS files, tailored to anthos version 1.4
   template:
     src: "{{item}}.{{anthos_template_version}}.j2"
     dest: "/home/ubuntu/{{ item|basename }}"
@@ -16,7 +16,7 @@
     - "{{playbook_dir}}/needed_on_adminws/14/user-hostconfig.yaml"
   when: anthos_template_version==14
 
-- name: create templates based on group_vars/all, tailored to anthos version {{anthos_template_version}}
+- name: create AdminWS, tailored to anthos version {{anthos_template_version}}
   template:
     src: "{{item}}.{{anthos_template_version}}.j2"
     dest: "/home/ubuntu/{{ item|basename }}"
@@ -31,4 +31,14 @@
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-seesaw-block.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-block.yaml"
   when: anthos_template_version>14
+
+- name: create AdminWS files for CoreDNS, tailored to anthos version {{anthos_template_version}}
+  template:
+    src: "{{item}}.{{anthos_template_version}}.j2"
+    dest: "/home/ubuntu/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # for configuring CoreDNS
+    - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/admin-clusterdns.yaml"
+  when: anthos_template_version>=19
 

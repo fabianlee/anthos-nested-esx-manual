@@ -1,0 +1,14 @@
+apiVersion: networking.gke.io/v1alpha1
+kind: ClusterDNS
+metadata:
+  name: default
+spec:
+  upstreamNameservers:
+  - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
+  - serverIP: 8.8.8.8
+  - serverIP: 8.8.4.4
+  domains:
+  - name: home.lab
+    nameservers:
+    - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
+  googleAccess: private
