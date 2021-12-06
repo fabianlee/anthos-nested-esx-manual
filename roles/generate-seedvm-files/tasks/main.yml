@@ -26,3 +26,10 @@
     - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
   when: anthos_template_version>14
 
+- name: copy over shell scripts for Seed VM
+  copy:
+    src: "{{item}}"
+    dest: "/home/ubuntu/seedvm"
+    mode: 0755
+  with_fileglob: "{{playbook_dir}}/needed_on_seedvm/*.sh"
+

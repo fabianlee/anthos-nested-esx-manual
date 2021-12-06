@@ -9,4 +9,4 @@ for file in 'vcsa-esxi.json' ; do
 done
 
 # copy govc related files
-scp -i ../tf-kvm-seedvm/id_rsa -r ../govc $file ubuntu@192.168.140.220:.
+scp -i ../tf-kvm-seedvm/id_rsa -r ../govc ubuntu@192.168.140.220:.

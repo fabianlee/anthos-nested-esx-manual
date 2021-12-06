@@ -1,0 +1,13 @@
+---
+
+- name: create templates based on group_vars/all
+  template:
+    src: "{{item}}.j2"
+    dest: "/home/ubuntu/{{ item|basename }}"
+    mode: 0775
+  loop:
+    # vcenter installation config
+    - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
+    # env vars to reach vcenter with govc
+    - "{{playbook_dir}}/govc/source-govc-vars.sh"
+

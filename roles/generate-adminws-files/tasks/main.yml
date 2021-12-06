@@ -38,7 +38,26 @@
     dest: "/home/ubuntu/{{ item|basename }}"
     mode: 0775
   loop:
-    # for configuring CoreDNS
+    # for configuring CoreDNS, newly introduced in Anthos 1.9
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/configure-clusterdns.yaml"
   when: anthos_template_version>=19
+
+- name: copy over json service account files for AdminWS
+  copy:
+    src: "{{item}}"
+    dest: "/home/ubuntu"
+    mode: 0664
+  with_fileglob: "{{playbook_dir}}/needed_on_adminws/*.json"
+
+- name: copy over script for AdminWS
+  copy:
+    src: "{{playbook_dir}}/needed_on_adminws/adminws_ssh_increase_timeout.sh"
+    dest: "/home/ubuntu"
+    mode: 0755
+
+- name: copy over entire k8s directory for AdminWS
+  copy:
+    src: "{{playbook_dir}}/needed_on_adminws/k8s"
+    dest: "/home/ubuntu"
+    mode: 0775
 
