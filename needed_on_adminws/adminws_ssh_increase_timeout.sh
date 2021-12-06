@@ -9,5 +9,5 @@ sudo grep Alive /etc/ssh/sshd_config
 sudo systemctl reload sshd
 echo "DONE"
 
-read -p "About to exit ssh session with Admin Workstation so changes take affect. Press <ENTER>"
-logout
+echo ""
+echo "You MUST exit the ssh session with the Admin Workstation so timeout changes will take affect !!!"
