@@ -9,8 +9,8 @@ vcsa_iso="$1"
 
 vm="seedvm-192.168.140.220"
 
-cdrom=$(virsh domblklist $vm --details | grep cdrom | awk {'print $3'})
-currentISO=$(virsh domblklist $vm --details | grep cdrom | awk {'print $4'})
+cdrom=$(virsh domblklist $vm --details | grep cdrom | awk '{print $3}')
+currentISO=$(virsh domblklist $vm --details | grep cdrom | awk '{print $4}')
 echo $vm current cdrom $cdrom with iso loaded $currentISO
 
 set -x
