@@ -16,7 +16,7 @@ bundle_safe_name: "{{ anthos_bundle_version | replace('.','') }}"
 
 # used for gcp access
 gcp:
-  project_id: clever-circlet-330611
+  project_id: clever-circlet-330611 # TODO must change to your gcp project id !!!!
   stackdriver_region: us-east1
 
 vcenter:
