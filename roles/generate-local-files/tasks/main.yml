@@ -6,8 +6,6 @@
     dest: "{{item}}"
     mode: 0775
   loop:
-    # vcenter installation config
-    - "{{playbook_dir}}/needed_on_vcenter_installer/vcsa-esxi.json"
     - "{{playbook_dir}}/govc/source-govc-vars.sh"
     - "{{playbook_dir}}/govc/start-vcenter-from-esxi.sh"
 
