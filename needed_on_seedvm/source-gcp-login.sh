@@ -3,7 +3,8 @@
 if [[ $# -lt 1 ]]; then
   echo "Usage: gcpProjectname"
   echo "Example: fabianleeorg"
-  exit 1
+  # do not exit a source script, it kills the session
+  return
 fi
 
 export project="$1"
