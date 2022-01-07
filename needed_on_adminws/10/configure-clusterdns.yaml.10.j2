@@ -1,0 +1,16 @@
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.9/how-to/configure-dns
+# https://cloud.google.com/anthos/clusters/docs/bare-metal/latest/how-to/cluster-dns
+apiVersion: networking.gke.io/v1alpha1
+kind: ClusterDNS
+metadata:
+  name: default
+spec:
+  upstreamNameservers:
+  - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
+  - serverIP: 8.8.8.8
+  - serverIP: 8.8.4.4
+  domains:
+  - name: home.lab
+    nameservers:
+    - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
+  googleAccess: default
