@@ -24,7 +24,7 @@
     # for creating admin workstation
     - "{{playbook_dir}}/needed_on_seedvm/admin-ws-config.yaml"
     - "{{playbook_dir}}/needed_on_seedvm/credential.yaml"
-  when: anthos_template_version>14
+  when: anthos_template_version>14 or anthos_template_version==10
 
 - name: copy over shell scripts for Seed VM
   copy:

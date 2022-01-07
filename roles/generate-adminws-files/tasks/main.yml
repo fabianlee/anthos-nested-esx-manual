@@ -30,7 +30,7 @@
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-cluster.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-seesaw-block.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-block.yaml"
-  when: anthos_template_version>14
+  when: anthos_template_version>14 or anthos_template_version==10
 
 - name: create AdminWS files for CoreDNS, tailored to anthos version {{anthos_template_version}}
   template:
@@ -40,7 +40,7 @@
   loop:
     # for configuring CoreDNS, newly introduced in Anthos 1.9
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/configure-clusterdns.yaml"
-  when: anthos_template_version>=19
+  when: anthos_template_version>=19 or anthos_template_version==10
 
 - name: copy over json service account files for AdminWS
   copy:
