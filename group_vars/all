@@ -6,18 +6,18 @@ ansible_python_interpreter: /usr/bin/python3
 
 # used to determine which templates to use (14=Anthos 1.4, 18=Anthos 1.8, 100=Anthos 10.0)
 # e.g. 'needed_on_adminws/<anthos_template_version>/*.j2'
-anthos_template_version: 19 # 18 | 19 | 110
+anthos_template_version: 110 # 18 | 19 | 110 | 111
 
 # versions listed here: 
 # https://cloud.google.com/anthos/clusters/docs/on-prem/1.8/downloads
 # https://cloud.google.com/anthos/clusters/docs/on-prem/1.9/downloads
 # https://cloud.google.com/anthos/clusters/docs/on-prem/1.10/downloads
-anthos_bundle_version: 1.9.2-gke.4 # 1.8.5-gke.3 | 1.9.1-gke.6 | 1.9.2-gke.4 | 1.10.0-gke.194
+anthos_bundle_version: 1.10.0-gke.194 # 1.8.5-gke.3 | 1.9.1-gke.6 | 1.9.2-gke.4 | 1.10.0-gke.194 | 1.11.0-gke.543
 bundle_safe_name: "{{ anthos_bundle_version | replace('.','') }}"
 
 # used for gcp access
 gcp:
-  project_id: clever-circlet-330611 # TODO must change to your gcp project id !!!!
+  project_id: anthos1-349412 # TODO must change to your gcp project id !!!!
   stackdriver_region: us-east1
 
 vcenter:
