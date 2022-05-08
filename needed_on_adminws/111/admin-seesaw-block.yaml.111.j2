@@ -1,0 +1,11 @@
+# copy this to the admin workstation after completion
+# block files do not contain 'hostconfig' section starting at 1.5
+# https://cloud.google.com/anthos/clusters/docs/on-prem/1.5/how-to/ip-block-file
+blocks:
+  - netmask: "255.255.255.0"
+    gateway: "192.168.141.1"
+    ips:
+    - ip: "192.168.141.252"
+      hostname: seesaw1
+    - ip: "192.168.141.253"
+      hostname: seesaw2
