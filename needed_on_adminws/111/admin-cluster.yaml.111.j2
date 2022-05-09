@@ -78,13 +78,11 @@ loadBalancer:
   # (Required) Which load balancer to use "F5BigIP" "Seesaw" or "ManualLB". Uncomment
   # the corresponding field below to provide the detailed spec
   kind: MetalLB # was Seesaw in 1.10
-  metalLB:
-    addressPools:
-    - name: address-pool-1
-      addresses:
-      - "192.168.141.249/32" # controlPlaneVIP
-      - "192.168.141.251/32" # addonsVIP
-      - "192.168.141.17-192.168.141.29" # range for auto-assignment
+
+  # addressPools not used for metalLB of Admin Cluster
+  #metalLB:
+  #  addressPools:
+
   # # (Required when using "ManualLB" kind) Specify pre-defined nodeports
   # manualLB:
   #   # NodePort for ingress service's http (only needed for user cluster)

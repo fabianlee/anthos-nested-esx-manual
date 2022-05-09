@@ -60,7 +60,7 @@ loadBalancer:
   # (Required) The VIPs to use for load balancing
   vips:
     # Used to connect to the Kubernetes API
-    controlPlaneVIP: "192.168.141.245"
+    controlPlaneVIP: "192.168.141.245" # found on admin cluster
     # Shared by all services for ingress traffic
     ingressVIP: "192.168.142.253"
   # (Required) Which load balancer to use "F5BigIP" "Seesaw" or "ManualLB". Uncomment
@@ -70,9 +70,9 @@ loadBalancer:
     addressPools:
     - name: address-pool-1
       addresses:
-      - "192.168.141.245/32" # controlPlaneVIP located in admin cluster CIDR
       - "192.168.142.253/32" # IngressVIP
-      - "192.168.142.17-192.168.142.29" # range for auto-assignment
+      - "192.168.142.17-192.168.142.29" # range for Service auto-assignment
+
   # # (Required when using "ManualLB" kind) Specify pre-defined nodeports
   # manualLB:
   #   # NodePort for ingress service's http (only needed for user cluster)
