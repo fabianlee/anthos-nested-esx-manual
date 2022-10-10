@@ -1,0 +1,67 @@
+# 1.11 no changes from 1.10
+gcp:
+  # Path of the component access service account's JSON key file
+  componentAccessServiceAccountKeyPath: "component-access-sa.json"
+# Specify which vCenter resources to use
+vCenter:
+  # The credentials and address GKE On-Prem should use to connect to vCenter
+  credentials:
+    address: "vcenter.home.lab"
+    # reference to vCenter credentials file
+    fileRef:
+      # read credentials from this file
+      path: credential.yaml
+      # entry in the credential file
+      entry: vCenter
+  datacenter: "mydc1" # govc ls /
+  datastore: "datastore1" # govc ls /mydc1/datastore
+  cluster: mycluster1 # govc ls /mydc1/host
+  network: "VM Network" # govc ls /mydc1/network
+  # vSphere vm folder to deploy vms into. defaults to datacenter top level folder
+  folder: admin-ws # will be created for you
+  resourcePool: "admin"
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: vcenter.ca.pem
+# The URL of the proxy for the jump host
+proxyUrl: ""
+adminWorkstation:
+  name: gke-admin-ws
+  cpus: 6
+  memoryMB: 8192
+  # The boot disk size of the admin workstation in GB. It is recommended to use a
+  # disk with at least 50 GB to host images decompressed from the bundle.
+  diskGB: 100
+  # Name for the persistent disk to be mounted to the home directory (ending in .vmdk).
+  # Any directory in the supplied path must be created before deployment.
+  dataDiskName: gke-admin-ws-data-disk.vmdk
+  # The size of the data disk in MB.
+  dataDiskMB: 512
+  network:
+    # The IP allocation mode: 'dhcp' or 'static'
+    ipAllocationMode: "static"
+    hostConfig:
+      # The IPv4 static IP address for the admin workstation
+      ip: "192.168.140.221"
+      # The IP address of the default gateway of the subnet in which the admin workstation
+      # is to be created
+      gateway: "192.168.140.1"
+      # The subnet mask of the network where you want to create your admin workstation
+      netmask: "255.255.255.0"
+      # The list of DNS nameservers to be used by the admin workstation
+      dns:
+      - "192.168.140.1"
+    # # The host config in static IP mode. Do not include if using DHCP
+    # hostConfig:
+    #   # The IPv4 static IP address for the admin workstation
+    #   ip: ""
+    #   # The IP address of the default gateway of the subnet in which the admin workstation
+    #   # is to be created
+    #   gateway: ""
+    #   # The subnet mask of the network where you want to create your admin workstation
+    #   netmask: ""
+    #   # The list of DNS nameservers to be used by the admin workstation
+    #   dns:
+    #   - ""
+  # The URL of the proxy for the admin workstation
+  proxyUrl: ""
+  ntpServer: time.google.com

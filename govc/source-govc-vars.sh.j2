@@ -16,9 +16,14 @@ export GOVC_PASSWORD={{vcenter.password}}
 export GOVC_INSECURE=true
 
 nc -w 1 -vz $GOVC_URL 443
-if [ $? -eq 0 ]; then
+if [[ $? -eq 0 ]]; then
   govc ls /
-  govc datacenter.info
+  govc datacenter.info >/dev/null 2>&1
+  if [[ $? -eq 0 ]]; then
+    govc datacenter.info
+  else
+    echo "datacenter is not created yet"
+  fi
 else
   echo "WARN: it does not appear that vCenter is ready at $GOVC_URL:443"
 fi

@@ -6,8 +6,8 @@ set -ex
 gcloud iam service-accounts list
 
 # create service account
-newServiceAccount="anthos-allowlisted"
-if gcloud iam service-accounts list | grep 'anthos-allowlisted@'; then
+newServiceAccount="component-access-sa"
+if gcloud iam service-accounts list | grep "${newServiceAccount}@"; then
   echo "$newServiceAccount alredy exists"
 else
   gcloud iam service-accounts create $newServiceAccount --display-name "anthos allowlisted" --project=$projectId

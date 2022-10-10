@@ -25,3 +25,14 @@ set -x
 # new requirement starting at 1.9
 gcloud services enable \
 opsconfigmonitoring.googleapis.com
+
+# new requirement starting at 1.13
+gcloud services enable \
+connectgateway.googleapis.com
+
+# for fleet host project, managing the lifecycle of user clusters in the google console
+gcloud services enable \
+iam.googleapis.com \
+anthosaudit.googleapis.com \
+opsconfigmonitoring.googleapis.com \
+storage.googleapis.com
