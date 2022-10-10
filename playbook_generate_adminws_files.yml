@@ -3,6 +3,7 @@
 # save IP address of ansible orchestrator
 - hosts: localhost
   connection: local
+  gather_facts: yes
   tasks:
     - set_fact:
         hostvm_ip: "{{ hostvm_ip | default(ansible_default_ipv4.address) }}"
@@ -10,9 +11,8 @@
 
 # IP address of ansible orchestrator still available
 - hosts: adminws
-  gather_facts: yes
   tasks:
-    - debug: msg="{{hostvars['localhost']['hostvm_ip']}}"
+    - debug: msg="from local {{hostvars['localhost']['hostvm_ip']}}"
   roles:
     - generate-adminws-files
 
