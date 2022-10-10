@@ -108,33 +108,33 @@ loadBalancer:
   #   # # (Optional) Specify a pool name if using SNAT
   #   # snatPoolName: ""
   # (Required when using "Seesaw" kind) Specify the Seesaw configs
-  seesaw:
-    # (Required) The absolute or relative path to the yaml file to use for IP allocation
-    # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
-    # by network.hostconfig if specified.
-    ipBlockFilePath: "admin-seesaw-block.yaml"
-    # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
-    # be between 1-255 and unique in a VLAN.
-    vrid: 3
-    # (Required) The IP announced by the master of Seesaw group
-    masterIP: "192.168.141.250"
-    # (Required) The number CPUs per machine
-    cpus: 1
-    # (Required) Memory size in MB per machine
-    memoryMB: 1024
-    # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
-    # network)
-    vCenter:
-      # vSphere network name
-      networkName: admin141
-    # (Optional) Run two LB VMs to achieve high availability (default: false)
-    enableHA: false
-    # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
-    # this mode MAC learning is not needed but the gateway must refresh arp table
-    # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
-    # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
-    # GKE on-prem version 1.7+. (default: false)
-    disableVRRPMAC: true
+#  seesaw:
+#    # (Required) The absolute or relative path to the yaml file to use for IP allocation
+#    # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
+#    # by network.hostconfig if specified.
+#    ipBlockFilePath: "admin-seesaw-block.yaml"
+#    # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
+#    # be between 1-255 and unique in a VLAN.
+#    vrid: 3
+#    # (Required) The IP announced by the master of Seesaw group
+#    masterIP: "192.168.141.250"
+#    # (Required) The number CPUs per machine
+#    cpus: 1
+#    # (Required) Memory size in MB per machine
+#    memoryMB: 1024
+#    # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
+#    # network)
+#    vCenter:
+#      # vSphere network name
+#      networkName: admin141
+#    # (Optional) Run two LB VMs to achieve high availability (default: false)
+#    enableHA: false
+#    # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
+#    # this mode MAC learning is not needed but the gateway must refresh arp table
+#    # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
+#    # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
+#    # GKE on-prem version 1.7+. (default: false)
+#    disableVRRPMAC: true
 # Spread admin addon nodes and user masters across different physical hosts (requires
 # at least three hosts)
 antiAffinityGroups:
@@ -154,7 +154,6 @@ antiAffinityGroups:
 #   autoResize:
 #     # Whether to enable auto resize for master. Defaults to false.
 #     enabled: false
-connectivity: connected
 # (Optional) Specify the proxy configuration
 proxy:
   # The URL of the proxy
@@ -177,6 +176,10 @@ proxy:
 # (Required): The absolute or relative path to the GCP service account key for pulling
 # GKE images
 componentAccessServiceAccountKeyPath: component-access-sa.json
+# (Optional) registers admin cluster in fleet
+gkeConnect:
+  projectID: {{gcp.project_id}}
+  registerServiceAccountKeyPath: connect-register-sa.json
 # (Optional) Specify which GCP project to connect your logs and metrics to
 stackdriver:
   projectID: "{{gcp.project_id}}"

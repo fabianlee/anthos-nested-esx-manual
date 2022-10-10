@@ -14,7 +14,7 @@
     - "{{playbook_dir}}/needed_on_adminws/14/user-cluster.yaml"
     - "{{playbook_dir}}/needed_on_adminws/14/user-seesaw-hostconfig.yaml"
     - "{{playbook_dir}}/needed_on_adminws/14/user-hostconfig.yaml"
-  when: anthos_template_version==14
+  when: anthos_template_version == 14
 
 - name: create AdminWS, tailored to anthos version {{anthos_template_version}} (>14 and < 113)
   template:
@@ -30,7 +30,7 @@
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-cluster.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-seesaw-block.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-block.yaml"
-  when: anthos_template_version>14 and anthos_template_version<113
+  when: anthos_template_version>14 and anthos_template_version < 113
 
 - name: create AdminWS, tailored to anthos version {{anthos_template_version}} (>= 113)
   template:
@@ -44,7 +44,7 @@
     # for creating user cluster
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-cluster.yaml"
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/user-block.yaml"
-  when: anthos_template_version>113
+  when: anthos_template_version >= 113
 
 - name: create AdminWS files for CoreDNS, tailored to anthos version {{anthos_template_version}} (>= 19)
   template:
@@ -54,7 +54,7 @@
   loop:
     # for configuring CoreDNS, newly introduced in Anthos 1.9
     - "{{playbook_dir}}/needed_on_adminws/{{anthos_template_version}}/configure-clusterdns.yaml"
-  when: anthos_template_version>=19
+  when: anthos_template_version >= 19
 
 - name: copy over json service account files for AdminWS
   copy:

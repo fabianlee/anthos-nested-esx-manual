@@ -6,8 +6,22 @@ kind: UserCluster
 name: "user1"
 # (Required) GKE on-prem version (example: 1.3.0-gke.16)
 gkeOnPremVersion: "{{anthos_bundle_version}}"
+# # (Optional) Specify the prepared secret configuration which can be added or edited
+# # only during cluster creation
+# preparedSecrets:
+#   # reference to the secret namespace for a group of secrets; it should be prepared
+#   # beforehand by 'gkectl prepare secrets' command; it is immutable.
+#   namespace: ""
+# # (Optional/Preview) Specify whether or not to use kubeception for managing this cluster.
+# # Default is true
+# kubeception: false
 # # (Optional) vCenter configuration (default: inherit from the admin cluster)
 vCenter:
+#   # # (Optional/Preview) vCenter server to use. kubeception needs to be false when the
+#   # # address is different from that in the admin cluster configuration
+#   # address: ""
+#   datacenter: ""
+#   cluster: ""
 #   # Resource pool to use. Specify [VSPHERE_CLUSTER_NAME]/Resources to use the default
 #   # resource pool
   resourcePool: "user"
@@ -22,6 +36,30 @@ vCenter:
 #       path: ""
 #       # entry in the credential file
 #       entry: ""
+#     # # (Optional) reference to the credential secret; it should be prepared beforehand
+#     # # by 'gkectl prepare secrets' command
+#     # secretRef:
+#     #   # The version for this prepared secret; it can be specified as 'latest' or integer
+#     #   # string; it will be defaulted to latest version if it is not specified when creating
+#     #   # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+#     #   # to be empty when rotating credentials
+#     #   version: ""
+#   # (Optional) vSphere folder where cluster VMs will be located. Defaults to the the
+#   # datacenter wide folder if unspecified.
+#   folder: ""
+# # (Optional) The absolute or relative path to the GCP service account key for pulling
+# # GKE images (default: inherit from the admin cluster)
+# componentAccessServiceAccountKeyPath: ""
+# # (Optional) The prepared credentials for component access service account key
+# componentAccessServiceAccountKey:
+#   # reference to the credential secret; it should be prepared beforehand by 'gkectl
+#   # prepare secrets' command
+#   secretRef:
+#     # The version for this prepared secret; it can be specified as 'latest' or integer
+#     # string; it will be defaulted to latest version if it is not specified when creating
+#     # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+#     # to be empty when rotating credentials
+#     version: ""
 # (Required) Network configuration; vCenter section is optional and inherits from
 # the admin cluster if not specified
 network:
@@ -55,6 +93,25 @@ network:
   vCenter:
     # vSphere network name
     networkName: user142
+  # # (Optional) List of additional node network interfaces feature enabled by multipleNetworkInterfaces
+  # additionalNodeInterfaces:
+  # # vSphere network name
+  # - networkName: ""
+  #   # (Required) Define what IP mode to use ("dhcp" "static" or "none")
+  #   type: dhcp
+  #   # # (Required when using "static" mode) The absolute or relative path to the yaml file
+  #   # # to use for static IP allocation. Hostconfig part will be overwritten by network.hostconfig
+  #   # # if specified
+  #   # ipBlockFilePath: ""
+  # # (Optional/Preview) Specify the IPs to use for control plane machines of a non-kubeception
+  # # cluster. 1 IP is needed for non-HA cluster and 3 for HA cluster. Non-empty controlPlaneIPBlock
+  # # is not allowed for a kubeception cluster
+  # controlPlaneIPBlock:
+  #   netmask: ""
+  #   gateway: ""
+  #   ips:
+  #   - ip: ""
+  #     hostname: ""
 # (Required) Load balancer configuration
 loadBalancer:
   # (Required) The VIPs to use for load balancing
@@ -98,35 +155,43 @@ loadBalancer:
   #   # # (Optional) Specify a pool name if using SNAT
   #   # snatPoolName: ""
   # (Required when using "Seesaw" kind) Specify the Seesaw configs
-  seesaw:
-    # (Required) The absolute or relative path to the yaml file to use for IP allocation
-    # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
-    # by network.hostconfig if specified.
-    ipBlockFilePath: "user-seesaw-block.yaml"
-    # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
-    # be between 1-255 and unique in a VLAN.
-    vrid: 4
-    # (Required) The IP announced by the master of Seesaw group
-    masterIP: "192.168.142.247"
-    # (Required) The number CPUs per machine
-    cpus: 1
-    # (Required) Memory size in MB per machine
-    memoryMB: 1024
-    # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
-    # network)
-    vCenter:
-      # vSphere network name
-      networkName: user142
-    # (Optional) Run two LB VMs to achieve high availability (default: false)
-    enableHA: false
-    # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
-    # this mode MAC learning is not needed but the gateway must refresh arp table
-    # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
-    # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
-    # GKE on-prem version 1.7+. (default: false)
-    disableVRRPMAC: true
+#  seesaw:
+#    # (Required) The absolute or relative path to the yaml file to use for IP allocation
+#    # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
+#    # by network.hostconfig if specified.
+#    ipBlockFilePath: "user-seesaw-block.yaml"
+#    # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
+#    # be between 1-255 and unique in a VLAN.
+#    vrid: 4
+#    # (Required) The IP announced by the master of Seesaw group
+#    masterIP: "192.168.142.247"
+#    # (Required) The number CPUs per machine
+#    cpus: 1
+#    # (Required) Memory size in MB per machine
+#    memoryMB: 1024
+#    # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
+#    # network)
+#    vCenter:
+#      # vSphere network name
+#      networkName: user142
+#    # (Optional) Run two LB VMs to achieve high availability (default: false)
+#    enableHA: false
+#    # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
+#    # this mode MAC learning is not needed but the gateway must refresh arp table
+#    # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
+#    # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
+#    # GKE on-prem version 1.7+. (default: false)
+#    disableVRRPMAC: true
 # # (Optional) Enable dataplane v2
 # enableDataplaneV2: false
+# # (Optional) Enable support for multiple networking interfaces
+# multipleNetworkInterfaces: false
+# # (Optional) Enable advanced dataplane v2 networking features such as Egress NAT Gateway
+# # and it requires enableDataplaneV2 to be set
+# advancedNetworking: false
+# # (Optional) Enable dataplane v2 for Windows
+# enableWindowsDataplaneV2: false
+# # (Optional) Storage specification for the cluster
 # # (Optional) Storage specification for the cluster
 # storage:
 #   # Whether to disable vSphere CSI components deployment. The feature is enabled by
@@ -143,6 +208,9 @@ masterNode:
   # autoResize:
   #   # Whether to enable auto resize for master. Defaults to false.
   #   enabled: false
+  # vsphere:
+  #   # (Optional) vSphere datastore the master nodes will be created on (default: vCenter.datastore)
+  #   datastore: ""
 # (Required) List of node pools. The total un-tainted replicas across all node pools
 # must be greater than or equal to 3
 nodePools:
@@ -179,50 +247,45 @@ nodePools:
   #   minReplicas: 0
   #   # max number of replicas in the NodePool
   #   maxReplicas: 0
+# # (Optional) Allow traffic of LoadBalancer typed services flow through nodes of this
+  # # pool. Can only be true in MetalLB mode. Default is false.
+  # enableLoadBalancer: false
 # Spread nodes across at least three physical hosts (requires at least three hosts)
 antiAffinityGroups:
   # Set to false to disable DRS rule creation
   enabled: false
+# # (Optional/Preview) Track user cluster VMs with vSphere tags
+# enableVMTracking: false
+# # Configure node pool update policy for the cluster
+# nodePoolUpdatePolicy:
+#   # (Optional/Preview) Number of node pools to update at a time. 0 means no limit.
+#   # 1 means updating one by one.
+#   maximumConcurrentNodePoolUpdate: 0
 # # (Optional) Configure additional authentication.
-# # Please note that OIDC and LDAP configuration will be removed starting in Anthos
-# # 1.10.
-# # Please refer to https://cloud.google.com/anthos/gke/docs/on-prem/1.6/how-to/oidc#oidc_spec
-# # for dynamic configuration changes after cluster creation.
 # authentication:
-#   # (Optional) Configure OIDC authentication
-#   oidc:
-#     # URL for OIDC Provider.
-#     issuerURL: ""
-#     # (Optional) Default is http://kubectl.redirect.invalid
-#     kubectlRedirectURL: ""
-#     # ID for OIDC client application.
-#     clientID: ""
-#     # (Optional) Secret for OIDC client application.
-#     clientSecret: ""
-#     # (Optional) JWT claim to use as the username.
-#     username: ""
-#     # (Optional) Prefix prepended to username claims.
-#     usernamePrefix: ""
-#     # (Optional) JWT claim to use as group name.
-#     group: ""
-#     # (Optional) Prefix prepended to group claims.
-#     groupPrefix: ""
-#     # (Optional) Additional scopes to send to OIDC provider as comma separated list.
-#     # Default is "openid".
-#     scopes: ""
-#     # (Optional) Additional key-value parameters to send to OIDC provider as comma
-#     # separated list.
-#     extraParams: ""
-#     # (Optional) Set value to string "true" or "false". Default is false.
-#     deployCloudConsoleProxy: ""
-#     # # (Optional) The absolute or relative path to the CA file
-#     # caPath: ""
 #   # (Optional) Provide an additional serving certificate for the API server
 #   sni:
 #     certPath: ""
 #     keyPath: ""
+# (Required) Specify which GCP project to connect your GKE clusters to
+gkeConnect:
+  projectID: "{{gcp.project_id}}"
+  # The absolute or relative path to the key file for a GCP service account used to
+  # register the cluster
+  registerServiceAccountKeyPath: "connect-register-sa.json"
+  # # (Optional) The prepared credentials for register service account key
+  # registerServiceAccountKey:
+  #   # reference to the credential secret; it should be prepared beforehand by 'gkectl
+  #   # prepare secrets' command
+  #   secretRef:
+  #     # The version for this prepared secret; it can be specified as 'latest' or integer
+  #     # string; it will be defaulted to latest version if it is not specified when creating
+  #     # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+  #     # to be empty when rotating credentials
+  #     version: ""
 # (Optional) Specify which GCP project to connect your logs and metrics to
 stackdriver:
+  # The project ID for logs and metrics. It should be the same with gkeconnect.projectID.
   projectID: "{{gcp.project_id}}"
   # A GCP region where you would like to store logs and metrics for this cluster.
   clusterLocation: "{{gcp.stackdriver_region}}"
@@ -230,16 +293,20 @@ stackdriver:
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster
   serviceAccountKeyPath: "log-mon-sa.json"
+  # # (Optional) The prepared credentials for stackdriver service account key
+  # serviceAccountKey:
+  #   # reference to the credential secret; it should be prepared beforehand by 'gkectl
+  #   # prepare secrets' command
+  #   secretRef:
+  #     # The version for this prepared secret; it can be specified as 'latest' or integer
+  #     # string; it will be defaulted to latest version if it is not specified when creating
+  #     # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+  #     # to be empty when rotating credentials
+  #     version: ""
   # (Optional) Disable vsphere resource metrics collection from vcenter.  False by
   # default
   disableVsphereResourceMetrics: false
-# (Optional) Specify which GCP project to connect your GKE clusters to
-gkeConnect:
-  projectID: "{{gcp.project_id}}"
-  # The absolute or relative path to the key file for a GCP service account used to
-  # register the cluster
-  registerServiceAccountKeyPath: "connect-register-sa.json"
-# # (Optional/Alpha) Configure the GKE usage metering feature
+# # (Optional/Preview) Configure the GKE usage metering feature
 # usageMetering:
 #   bigQueryProjectID: ""
 #   # The ID of the BigQuery Dataset in which the usage metering data will be stored
@@ -247,17 +314,48 @@ gkeConnect:
 #   # The absolute or relative path to the key file for a GCP service account used by
 #   # gke-usage-metering to report to BigQuery
 #   bigQueryServiceAccountKeyPath: ""
+#   # # (Optional) The prepared credentials for big query service account key
+#   # bigQueryServiceAccountKey:
+#   #   # reference to the credential secret; it should be prepared beforehand by 'gkectl
+#   #   # prepare secrets' command
+#   #   secretRef:
+#   #     # The version for this prepared secret; it can be specified as 'latest' or integer
+#   #     # string; it will be defaulted to latest version if it is not specified when creating
+#   #     # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+#   #     # to be empty when rotating credentials
+#   #     version: ""
 #   # Whether or not to enable consumption-based metering
 #   enableConsumptionMetering: false
-# # (Optional/Preview) Configure kubernetes apiserver audit logging
+# # (Optional) Configure kubernetes apiserver audit logging
 # cloudAuditLogging:
+#   # The project ID for logs and metrics. It should be the same with gkeconnect.projectID.
 #   projectID: ""
 #   # A GCP region where you would like to store audit logs for this cluster.
 #   clusterLocation: ""
 #   # The absolute or relative path to the key file for a GCP service account used to
 #   # send audit logs from the cluster
 #   serviceAccountKeyPath: ""
+#   # # (Optional) The prepared credentials for cloud audit logging service account key
+#   # serviceAccountKey:
+#   #   # reference to the credential secret; it should be prepared beforehand by 'gkectl
+#   #   # prepare secrets' command
+#   #   secretRef:
+#   #     # The version for this prepared secret; it can be specified as 'latest' or integer
+#   #     # string; it will be defaulted to latest version if it is not specified when creating
+#   #     # a cluster; it is allowed to be empty when creating a cluster; it is not allowed
+#   #     # to be empty when rotating credentials
+#   #     version: ""
 # Enable auto repair for the cluster
 autoRepair:
   # Whether to enable auto repair feature. Set false to disable.
   enabled: true
+# # Encrypt Kubernetes secrets at rest
+# secretsEncryption:
+#   # Secrets Encryption Mode. Possible values are: GeneratedKey
+#   mode: GeneratedKey
+#   # GeneratedKey Secrets Encryption config
+#   generatedKey:
+#     # # key version
+#     # keyVersion: 1
+#     # # disable secrets encryption
+#     # disabled: false
