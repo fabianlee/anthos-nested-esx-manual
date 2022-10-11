@@ -226,20 +226,22 @@ nodePools:
   # "ubuntu_containerd" or "cos". Default is "ubuntu_containerd".
   osImageType: cos # was using ubuntu_containerd in 1.10, but now moving to ContainerOS
   # # Labels to apply to Kubernetes Node objects
-  # labels: {}
+  labels:
+    label1: foo
+    environment: testing
   # # Taints to apply to Kubernetes Node objects
   # taints:
   # - key: ""
   #   value: ""
   #   effect: ""
-  # vsphere:
+  vsphere:
   #   # (Optional) vSphere datastore the node pool will be created on (default: vCenter.datastore)
   #   datastore: ""
   #   # (Optional) vSphere tags to be attached to the virtual machines in the node pool.
   #   # It is supported in GKE on-prem version 1.7+
-  #   tags:
-  #   - category: ""
-  #     name: ""
+    tags:
+    - category: "purpose"
+      name: "testing"
   # # (Optional/Preview) Horizontal autoscaling for the nodepool; replicas should not
   # # be edited while updating the nodepool if this is turned on
   # autoscaling:
@@ -255,7 +257,7 @@ antiAffinityGroups:
   # Set to false to disable DRS rule creation
   enabled: false
 # # (Optional/Preview) Track user cluster VMs with vSphere tags
-# enableVMTracking: false
+enableVMTracking: true
 # # Configure node pool update policy for the cluster
 # nodePoolUpdatePolicy:
 #   # (Optional/Preview) Number of node pools to update at a time. 0 means no limit.
