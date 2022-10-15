@@ -13,4 +13,7 @@ spec:
   - name: home.lab
     nameservers:
     - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
+  - name: fabian.lee
+    nameservers:
+    - serverIP: "{{ hostvm_ip | default(hostvars['localhost']['hostvm_ip']) }}"
   googleAccess: default
