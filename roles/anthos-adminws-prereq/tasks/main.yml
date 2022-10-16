@@ -66,3 +66,7 @@
       export EDITOR=vim
       export VISUAL=vim
 
+- name: extend TMOUT so ssh client does timeout, 600 seconds
+  shell:
+    cmd: sed -i 's/TMOUT=.*/TMOUT=600/' $(grep -sr ^TMOUT -l)
+    chdir: /etc/profile.d
