@@ -6,6 +6,9 @@ sudo sed -i 's/^ClientAliveInterval.*/ClientAliveInterval 60/' /etc/ssh/sshd_con
 sudo sed -i 's/^ClientAliveCountMax.*/ClientAliveCountMax 240/' /etc/ssh/sshd_config
 sudo grep Alive /etc/ssh/sshd_config
 
+# TMOUT will also cause the ssh client to timeout
+cd /etc/profile.d && sudo sed -i 's/TMOUT=.*/TMOUT=600/' $(grep -sr ^TMOUT -l)
+
 sudo systemctl reload sshd
 echo "DONE"
 
