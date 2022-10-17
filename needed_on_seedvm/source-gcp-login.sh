@@ -16,7 +16,7 @@ gcloud projects list >/dev/null 2>&1
 gcloud projects list
 
 # get project id
-export projectId=$(gcloud projects list --filter="name=$project" --format="value(project_id)")
+export projectId=$(gcloud projects list --filter="name~$project" --format="value(project_id)")
 echo selected project $project id is $projectId
 
 # set project

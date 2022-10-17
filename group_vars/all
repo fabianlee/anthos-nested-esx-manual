@@ -17,7 +17,7 @@ bundle_safe_name: "{{ anthos_bundle_version | replace('.','') }}"
 
 # used for gcp access
 gcp:
-  project_id: anthos1-365115 # TODO must change to your gcp project id !!!!
+  project_id: anthos1-365800 # TODO must change to your gcp project id !!!!
   stackdriver_region: us-east1
 
 vcenter:
