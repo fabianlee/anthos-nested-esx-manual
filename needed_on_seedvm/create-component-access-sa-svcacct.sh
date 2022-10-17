@@ -8,7 +8,7 @@ gcloud iam service-accounts list
 # create service account
 newServiceAccount="component-access-sa"
 if gcloud iam service-accounts list | grep "${newServiceAccount}@"; then
-  echo "$newServiceAccount alredy exists"
+  echo "$newServiceAccount already exists"
 else
   gcloud iam service-accounts create $newServiceAccount --display-name "anthos component access" --project=$projectId
   # wait for service account to be fully consistent
