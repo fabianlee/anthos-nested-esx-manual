@@ -1,0 +1,24 @@
+kind: ClientConfig
+metadata:
+  name: default
+  namespace: kube-public
+spec:
+  authentication:
+  - name: ldap
+    ldap:
+      host: $ldap_server
+      certificateAuthorityData: $ca_base64
+      connectionType: startTLS
+      serviceAccountSecret:
+        name: ldap-secret
+        namespace: anthos-identity-service
+        type: basic
+      user:
+        baseDN: CN=Users,$base_DC
+        filter: (objectClass=user)
+        identifierAttribute: userPrincipalName
+        loginAttribute: cn
+      group:
+        baseDN: CN=Users,$base_DC
+        filter: (objectClass=group)
+        identifierAttribute: cn

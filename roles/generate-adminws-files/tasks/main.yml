@@ -75,3 +75,9 @@
     dest: "/home/ubuntu"
     mode: 0775
 
+- name: copy over entire 'anthos-identity' directory for AdminWS
+  copy:
+    src: "{{playbook_dir}}/anthos-identity"
+    dest: "/home/ubuntu"
+    mode: 0775
+
