@@ -22,6 +22,7 @@
     - unzip
     - ntpdate
     - netcat
+    - ldap-utils # for ldapsearch
     state: present
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
